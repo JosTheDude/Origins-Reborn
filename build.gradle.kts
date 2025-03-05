@@ -1,11 +1,11 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.11" apply false
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.14" apply false
 }
 
 group = "com.starshootercity"
-version = "2.4.9"
+version = "2.5.0"
 
 repositories {
     mavenCentral()
