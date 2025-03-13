@@ -1,7 +1,6 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,9 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class Unwieldy implements VisibleAbility, Listener {
+public class NoShield implements VisibleAbilityV2, Listener {
     @EventHandler
     public void onServerTickEnd(ServerTickEndEvent event) {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -25,12 +22,12 @@ public class Unwieldy implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("The way your hands are formed provide no way of holding a shield upright.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "The way your hands are formed provide no way of holding a shield upright.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Unwieldy", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Unwieldy";
     }
 }

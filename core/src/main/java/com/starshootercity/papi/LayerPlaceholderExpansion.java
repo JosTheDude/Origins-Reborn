@@ -1,15 +1,18 @@
-package com.starshootercity;
+package com.starshootercity.papi;
 
+import com.starshootercity.Origin;
+import com.starshootercity.OriginSwapper;
+import com.starshootercity.OriginsReborn;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OriginsRebornPlaceholderExpansion extends PlaceholderExpansion {
+public class LayerPlaceholderExpansion extends PlaceholderExpansion {
 
     private final String layer;
 
-    public OriginsRebornPlaceholderExpansion(String layer) {
+    public LayerPlaceholderExpansion(String layer) {
         this.layer = layer;
     }
 
