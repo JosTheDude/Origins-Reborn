@@ -1,28 +1,25 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class AquaAffinity implements VisibleAbility, BreakSpeedModifierAbility {
+public class AquaAffinity implements BreakSpeedModifierAbility, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:aqua_affinity");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You may break blocks underwater as others do on land.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You may break blocks underwater as others do on land.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Aqua Affinity", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Aqua Affinity";
     }
 
     @Override

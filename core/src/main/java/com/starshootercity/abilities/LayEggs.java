@@ -1,6 +1,5 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -13,9 +12,7 @@ import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class LayEggs implements VisibleAbility, Listener {
+public class LayEggs implements Listener, VisibleAbility {
     @EventHandler
     public void onTimeSkip(TimeSkipEvent event) {
         if (event.getSkipReason() == TimeSkipEvent.SkipReason.NIGHT_SKIP) {
@@ -29,18 +26,19 @@ public class LayEggs implements VisibleAbility, Listener {
             }
         }
     }
+
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:lay_eggs");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Whenever you wake up in the morning, you will lay an egg.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Whenever you wake up in the morning, you will lay an egg.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Oviparous", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Oviparous";
     }
 }

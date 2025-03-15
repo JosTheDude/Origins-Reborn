@@ -6,6 +6,7 @@ import com.starshootercity.abilities.*;
 import com.starshootercity.commands.OriginCommand;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.geysermc.GeyserSwapper;
+import com.starshootercity.util.config.ConfigManager;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
+import com.starshootercity.util.ShortcutUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -25,7 +27,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -70,7 +71,7 @@ public class OriginSwapper implements Listener {
     /**
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void openOriginSwapper(Player player, PlayerSwapOriginEvent.SwapReason reason, int slot, int scrollAmount, boolean cost, boolean displayOnly) {
         openOriginSwapper(player, reason, slot, scrollAmount, cost, displayOnly, "origin");
     }
@@ -78,7 +79,7 @@ public class OriginSwapper implements Listener {
     /**
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void openOriginSwapper(Player player, PlayerSwapOriginEvent.SwapReason reason, int slot, int scrollAmount) {
         openOriginSwapper(player, reason, slot, scrollAmount, "origin");
     }
@@ -86,7 +87,7 @@ public class OriginSwapper implements Listener {
     /**
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void openOriginSwapper(Player player, PlayerSwapOriginEvent.SwapReason reason, int slot, int scrollAmount, boolean cost) {
         openOriginSwapper(player, reason, slot, scrollAmount, cost, "origin");
     }
@@ -123,21 +124,21 @@ public class OriginSwapper implements Listener {
             String name;
             String nameForDisplay;
             char impact;
-            int amount = OriginsReborn.getInstance().getConfig().getInt("swap-command.vault.default-cost", 1000);
+            int amount = ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_DEFAULT_COST);
             LineData data;
             if (slot == origins.size()) {
-                List<String> excludedOrigins = OriginsReborn.getInstance().getConfig().getStringList("origin-selection.random-option.exclude");
+                List<String> excludedOrigins = ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_RANDOM_OPTION_EXCLUDE);
                 List<String> excludedOriginNames = new ArrayList<>();
                 for (String s : excludedOrigins) {
                     Origin origin = AddonLoader.getOriginByFilename(s);
                     if (origin == null) continue;
-                    excludedOriginNames.add(AddonLoader.getTextFor("origin." + origin.getAddon().getNamespace() + "." + s.replace(" ", "_").toLowerCase() + ".name", origin.getName()));
+                    excludedOriginNames.add(origin.getName());
                 }
                 icon = OrbOfOrigin.orb.clone();
-                name = AddonLoader.getTextFor("origin.origins.random.name", "Random");
-                nameForDisplay = AddonLoader.getTextFor("origin.origins.random.name", "Random");
+                name = Translator.translate(randomName);
+                nameForDisplay = name;
                 impact = '\uE002';
-                StringBuilder names = new StringBuilder("%s\n\n".formatted(AddonLoader.getTextFor("origin.origins.random.description", "You'll be assigned one of the following:")));
+                StringBuilder names = new StringBuilder("%s\n\n".formatted(Translator.translate(randomDescription)));
                 for (Origin origin : origins) {
                     if (!excludedOriginNames.contains(origin.getName())) {
                         names.append(origin.getName()).append("\n");
@@ -163,7 +164,7 @@ public class OriginSwapper implements Listener {
                 compressedName.append(c);
                 compressedName.append('\uF000');
             }
-            Component background = applyFont(ShortcutUtils.getColored(OriginsReborn.getInstance().getConfig().getString("origin-selection.screen-title.background", "")), Key.key("minecraft:default"));
+            Component background = applyFont(ShortcutUtils.getColored(ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_SCREEN_TITLE_BACKGROUND)), Key.key("minecraft:default"));
             Component component = applyFont(Component.text("\uF000\uE000\uF001\uE001\uF002" + impact),
                     Key.key("minecraft:origin_selector"))
                     .color(NamedTextColor.WHITE)
@@ -177,8 +178,8 @@ public class OriginSwapper implements Listener {
             for (Component c : data.getLines(scrollAmount)) {
                 component = component.append(c);
             }
-            Component prefix = applyFont(ShortcutUtils.getColored(OriginsReborn.getInstance().getConfig().getString("origin-selection.screen-title.prefix", "")), Key.key("minecraft:default"));
-            Component suffix = applyFont(ShortcutUtils.getColored(OriginsReborn.getInstance().getConfig().getString("origin-selection.screen-title.suffix", "")), Key.key("minecraft:default"));
+            Component prefix = applyFont(ShortcutUtils.getColored(ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_SCREEN_TITLE_PREFIX)), Key.key("minecraft:default"));
+            Component suffix = applyFont(ShortcutUtils.getColored(ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_SCREEN_TITLE_SUFFIX)), Key.key("minecraft:default"));
             Inventory swapperInventory = Bukkit.createInventory(null, 54,
                     prefix.append(component).append(suffix)
             );
@@ -370,7 +371,7 @@ public class OriginSwapper implements Listener {
                         openOriginSwapper(player, reason, 0, 0, layer);
                         return;
                     }
-                    OriginsReborn.getCooldowns().setCooldown(player, OriginCommand.key);
+                    if (reason == PlayerSwapOriginEvent.SwapReason.COMMAND) OriginsReborn.getCooldowns().setCooldown(player, OriginCommand.key, ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_COOLDOWN));
                     setOrigin(player, origin, reason, resetPlayer, layer);
                 } else if (currentItem.getItemMeta().getPersistentDataContainer().has(closeKey, BooleanPDT.BOOLEAN)) event.getWhoClicked().closeInventory();
             }
@@ -388,13 +389,13 @@ public class OriginSwapper implements Listener {
     public static int getWidth(String s) {
         int result = 0;
         for (char c : s.toCharArray()) {
-            result += WidthGetter.getWidth(c);
+            result += Translator.getWidth(c);
         }
         return result;
     }
 
     public static String getInverse(char c) {
-        return switch (WidthGetter.getWidth(c)) {
+        return switch (Translator.getWidth(c)) {
             case 0 -> "";
             case 2 -> "\uF001";
             case 3 -> "\uF002";
@@ -503,12 +504,6 @@ public class OriginSwapper implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(OriginsReborn.getInstance(), () -> resetAttributes(event.getPlayer()), 5);
-    }
-
-    @EventHandler
-    @SuppressWarnings("deprecation")
     public void onPlayerJoin(PlayerJoinEvent event) {
         loadOrigins(event.getPlayer());
         resetAttributes(event.getPlayer());
@@ -632,7 +627,7 @@ public class OriginSwapper implements Listener {
             }
         }
 
-        name = event.getNewOrigin().getActualName().replace(" ", "_").toLowerCase();
+        name = event.getNewOrigin().getName().replace(" ", "_").toLowerCase();
         if (OriginsReborn.getInstance().getConfig().contains("commands-on-origin.%s".formatted(name))) {
             for (String s : OriginsReborn.getInstance().getConfig().getStringList("commands-on-origin.%s".formatted(name))) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", event.getPlayer().getName()).replace("%uuid%", event.getPlayer().getUniqueId().toString()));
@@ -676,6 +671,9 @@ public class OriginSwapper implements Listener {
                 } else openOriginSwapper(event.getPlayer(), PlayerSwapOriginEvent.SwapReason.INITIAL, 0, 0, layer);
             }
         }
+
+        resetAttributes(event.getPlayer());
+        applyAttributeChanges(event.getPlayer());
     }
 
     public PlayerSwapOriginEvent.SwapReason getReason(ItemStack icon) {
@@ -685,7 +683,7 @@ public class OriginSwapper implements Listener {
     /**
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static @Nullable Origin getOrigin(Player player) {
         return getOrigin(player, "origin");
     }
@@ -741,12 +739,11 @@ public class OriginSwapper implements Listener {
     /**
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void setOrigin(Player player, @Nullable Origin origin, PlayerSwapOriginEvent.SwapReason reason, boolean resetPlayer) {
         setOrigin(player, origin, reason, resetPlayer, "origin");
     }
 
-    @SuppressWarnings("deprecation")
     public static void setOrigin(Player player, @Nullable Origin origin, PlayerSwapOriginEvent.SwapReason reason, boolean resetPlayer, String layer) {
         PlayerSwapOriginEvent swapOriginEvent = new PlayerSwapOriginEvent(player, reason, resetPlayer, getOrigin(player, layer), origin);
         if (!swapOriginEvent.callEvent()) return;
@@ -782,13 +779,19 @@ public class OriginSwapper implements Listener {
 
     private final String invulnerableMode;
 
+    private static final String randomName = "random-origin.name";
+    private static final String randomDescription = "random-origin.description";
+
     public OriginSwapper() {
+        Translator.registerTranslation(randomName, "Random");
+        Translator.registerTranslation(randomDescription, "You'll be assigned one of the following:");
+
         invulnerableMode = OriginsReborn.getInstance().getConfig().getString("origin-selection.invulnerable-mode", "OFF");
 
-        originFile = new File(OriginsReborn.getInstance().getDataFolder(), "selected-origins.yml");
+        originFile = new File(OriginsReborn.getInstance().getDataFolder(), "internals/selected-origins.yml");
         if (!originFile.exists()) {
             boolean ignored = originFile.getParentFile().mkdirs();
-            OriginsReborn.getInstance().saveResource("selected-origins.yml", false);
+            OriginsReborn.getInstance().saveResource("internals/selected-origins.yml", false);
         }
         originFileConfiguration = new YamlConfiguration();
         try {
@@ -797,10 +800,10 @@ public class OriginSwapper implements Listener {
             throw new RuntimeException(e);
         }
 
-        usedOriginFile = new File(OriginsReborn.getInstance().getDataFolder(), "used-origins.yml");
+        usedOriginFile = new File(OriginsReborn.getInstance().getDataFolder(), "internals/used-origins.yml");
         if (!usedOriginFile.exists()) {
             boolean ignored = usedOriginFile.getParentFile().mkdirs();
-            OriginsReborn.getInstance().saveResource("used-origins.yml", false);
+            OriginsReborn.getInstance().saveResource("internals/used-origins.yml", false);
         }
         usedOriginFileConfiguration = new YamlConfiguration();
         try {
@@ -827,7 +830,6 @@ public class OriginSwapper implements Listener {
     }
 
     public static class LineData {
-        // TODO Deprecate this and replace it with 'description' and 'title' methods inside VisibleAbility which returns the specified value as a fallback
         public static List<LineComponent> makeLineFor(String text, LineComponent.LineType type) {
             StringBuilder result = new StringBuilder();
             StringBuilder rawResult = new StringBuilder();

@@ -4,6 +4,7 @@ import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.*;
 import com.starshootercity.packetsenders.OriginsRebornBlockDamageAbortEvent;
+import com.starshootercity.util.ShortcutUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -66,18 +68,17 @@ public interface BreakSpeedModifierAbility extends Ability {
         public void onBlockDamage(BlockDamageEvent event) {
             if (event.getBlock().getType().getHardness() < 0) return;
             Bukkit.getScheduler().scheduleSyncDelayedTask(OriginsReborn.getInstance(), () -> {
-                List<Origin> origins = OriginSwapper.getOrigins(event.getPlayer());
-                List<Ability> abilities = new ArrayList<>();
-                for (Origin origin : origins) abilities.addAll(origin.getAbilities());
                 BreakSpeedModifierAbility speedModifierAbility = null;
-                for (Ability ability : abilities) {
-                    if (ability instanceof BreakSpeedModifierAbility modifierAbility) {
-                        if (modifierAbility.shouldActivate(event.getPlayer())) {
-                            speedModifierAbility = modifierAbility;
+
+                for (BreakSpeedModifierAbility ability : AbilityRegister.breakSpeedModifierAbilities) {
+                    if (ability.hasAbility(event.getPlayer())) {
+                        if (ability.shouldActivate(event.getPlayer())) {
+                            speedModifierAbility = ability;
                             break;
                         }
                     }
                 }
+
                 if (speedModifierAbility == null) return;
                 AtomicInteger time = new AtomicInteger();
                 Entity marker = event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.MARKER);
@@ -89,7 +90,7 @@ public interface BreakSpeedModifierAbility extends Ability {
                         if (damage >= 1) {
                             int taskNum = blockbreakingTasks.get(event.getPlayer());
                             cancelTask(taskNum);
-                            BlockBreakEvent blockBreakEvent = new StrongArms.StrongArmsBreakSpeed.StrongArmsFastBlockBreakEvent(event.getBlock(), event.getPlayer());
+                            BlockBreakEvent blockBreakEvent = new ModifiedBlockBreakEvent(event.getBlock(), event.getPlayer());
                             blockBreakEvent.callEvent();
                             ItemStack handItem = event.getPlayer().getInventory().getItemInMainHand();
                             if (isTool(handItem.getType())) {
@@ -298,5 +299,11 @@ public interface BreakSpeedModifierAbility extends Ability {
 
     private static boolean isTool(Material material) {
         return MaterialTags.PICKAXES.isTagged(material) || MaterialTags.AXES.isTagged(material) || MaterialTags.SWORDS.isTagged(material) || MaterialTags.SHOVELS.isTagged(material) || MaterialTags.HOES.isTagged(material) || material == Material.SHEARS || material == Material.TRIDENT;
+    }
+
+    class ModifiedBlockBreakEvent extends BlockBreakEvent {
+        public ModifiedBlockBreakEvent(@NotNull Block theBlock, @NotNull Player player) {
+            super(theBlock, player);
+        }
     }
 }

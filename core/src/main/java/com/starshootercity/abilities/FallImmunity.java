@@ -1,15 +1,12 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class FallImmunity implements VisibleAbility, Listener {
+public class FallImmunity implements Listener, VisibleAbility {
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         runForAbility(event.getEntity(), player -> {
@@ -25,17 +22,12 @@ public class FallImmunity implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor(
-                    "You never take fall damage, no matter from which height you fall.",
-                    OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You never take fall damage, no matter from which height you fall.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor(
-                "Acrobatics",
-                OriginSwapper.LineData.LineComponent.LineType.TITLE
-        );
+    public String title() {
+        return "Acrobatics";
     }
 }

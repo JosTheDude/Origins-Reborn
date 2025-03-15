@@ -1,7 +1,6 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
-import com.starshootercity.ShortcutUtils;
+import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,9 +9,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class SlowFalling implements VisibleAbility, Listener {
+public class SlowFalling implements Listener, VisibleAbility {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         runForAbility(event.getPlayer(), player -> {
@@ -28,12 +25,12 @@ public class SlowFalling implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You fall as gently to the ground as a feather would, unless you sneak.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You fall as gently to the ground as a feather would, unless you sneak.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Featherweight", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Featherweight";
     }
 }

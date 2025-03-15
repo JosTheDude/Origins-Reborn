@@ -1,8 +1,8 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
@@ -16,10 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class StrongArms implements MultiAbility, VisibleAbility, Listener {
+public class StrongArms implements MultiAbility, Listener, VisibleAbility {
 
     @Override
     public @NotNull Key getKey() {
@@ -27,13 +27,13 @@ public class StrongArms implements MultiAbility, VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You are strong enough to break natural stones without using a pickaxe.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You are strong enough to break natural stones without using a pickaxe.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Strong Arms", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Strong Arms";
     }
 
     @Override
@@ -41,23 +41,31 @@ public class StrongArms implements MultiAbility, VisibleAbility, Listener {
         return List.of(StrongArmsDrops.strongArmsDrops, StrongArmsBreakSpeed.strongArmsBreakSpeed);
     }
 
+    private static List<Material> naturalStones;
+
+    @Override
+    public void initialize() {
+        String naturalStone = "natural_stones";
+        registerConfigOption(OriginsReborn.getInstance(), naturalStone, Collections.singletonList("Blocks that count as natural stone"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
+                Material.STONE,
+                Material.TUFF,
+                Material.GRANITE,
+                Material.DIORITE,
+                Material.ANDESITE,
+                Material.SANDSTONE,
+                Material.SMOOTH_SANDSTONE,
+                Material.RED_SANDSTONE,
+                Material.SMOOTH_RED_SANDSTONE,
+                Material.DEEPSLATE,
+                Material.BLACKSTONE,
+                Material.NETHERRACK
+        ));
+
+        naturalStones = getConfigOption(OriginsReborn.getInstance(), naturalStone, ConfigManager.SettingType.MATERIAL_LIST);
+    }
+
     public static class StrongArmsDrops implements Ability, Listener {
         public static StrongArmsDrops strongArmsDrops = new StrongArmsDrops();
-
-        private static final List<Material> naturalStones = new ArrayList<>() {{
-            add(Material.STONE);
-            add(Material.TUFF);
-            add(Material.GRANITE);
-            add(Material.DIORITE);
-            add(Material.ANDESITE);
-            add(Material.SANDSTONE);
-            add(Material.SMOOTH_SANDSTONE);
-            add(Material.RED_SANDSTONE);
-            add(Material.SMOOTH_RED_SANDSTONE);
-            add(Material.DEEPSLATE);
-            add(Material.BLACKSTONE);
-            add(Material.NETHERRACK);
-        }};
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         public void onBlockBreak(BlockBreakEvent event) {
@@ -67,7 +75,7 @@ public class StrongArms implements MultiAbility, VisibleAbility, Listener {
                         event.setCancelled(true);
                         ItemStack item = new ItemStack(Material.IRON_PICKAXE);
                         item.addUnsafeEnchantments(player.getInventory().getItemInMainHand().getEnchantments());
-                        event.getBlock().breakNaturally(item, event instanceof StrongArmsBreakSpeed.StrongArmsFastBlockBreakEvent);
+                        event.getBlock().breakNaturally(item, event instanceof BreakSpeedModifierAbility.ModifiedBlockBreakEvent);
                     }
                 }
             });
@@ -82,20 +90,6 @@ public class StrongArms implements MultiAbility, VisibleAbility, Listener {
     public static class StrongArmsBreakSpeed implements BreakSpeedModifierAbility, Listener {
         public static StrongArmsBreakSpeed strongArmsBreakSpeed = new StrongArmsBreakSpeed();
 
-        private static final List<Material> naturalStones = new ArrayList<>() {{
-            add(Material.STONE);
-            add(Material.TUFF);
-            add(Material.GRANITE);
-            add(Material.DIORITE);
-            add(Material.ANDESITE);
-            add(Material.SANDSTONE);
-            add(Material.SMOOTH_SANDSTONE);
-            add(Material.RED_SANDSTONE);
-            add(Material.SMOOTH_RED_SANDSTONE);
-            add(Material.DEEPSLATE);
-            add(Material.BLACKSTONE);
-            add(Material.NETHERRACK);
-        }};
         @Override
         public @NotNull Key getKey() {
             return Key.key("origins:strong_arms_break_speed");
@@ -124,12 +118,6 @@ public class StrongArms implements MultiAbility, VisibleAbility, Listener {
         public boolean shouldActivate(Player player) {
             Block target = player.getTargetBlockExact(8, FluidCollisionMode.NEVER);
             return !MaterialTags.PICKAXES.isTagged(player.getInventory().getItemInMainHand().getType()) && target != null && naturalStones.contains(target.getType());
-        }
-
-        public static class StrongArmsFastBlockBreakEvent extends BlockBreakEvent {
-            public StrongArmsFastBlockBreakEvent(@NotNull Block theBlock, @NotNull Player player) {
-                super(theBlock, player);
-            }
         }
     }
 }

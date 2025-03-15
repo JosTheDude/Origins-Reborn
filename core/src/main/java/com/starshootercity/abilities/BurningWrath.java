@@ -1,19 +1,20 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
+import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collections;
 
-public class BurningWrath implements VisibleAbility, Listener {
+public class BurningWrath implements Listener, VisibleAbility {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         runForAbility(event.getDamager(), player -> {
-            if (player.getFireTicks() > 0) event.setDamage(event.getDamage() + 3);
+            if (player.getFireTicks() > 0) event.setDamage(event.getDamage() + getConfigOption(OriginsReborn.getInstance(), damageIncrease, ConfigManager.SettingType.INTEGER));
         });
     }
 
@@ -23,12 +24,19 @@ public class BurningWrath implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("When on fire, you deal additional damage with your attacks.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "When on fire, you deal additional damage with your attacks.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Burning Wrath", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Burning Wrath";
+    }
+
+    private final String damageIncrease = "damage_increase";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), damageIncrease, Collections.singletonList("How much to increase damage dealt when on fire"), ConfigManager.SettingType.INTEGER, 3);
     }
 }

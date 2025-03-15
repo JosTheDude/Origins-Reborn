@@ -1,13 +1,10 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class Tailwind implements AttributeModifierAbility, VisibleAbility {
     @Override
@@ -16,13 +13,13 @@ public class Tailwind implements AttributeModifierAbility, VisibleAbility {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You are a little bit quicker on foot than others.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You are a little bit quicker on foot than others.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Tailwind", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Tailwind";
     }
 
     @Override

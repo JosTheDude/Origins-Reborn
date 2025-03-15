@@ -1,13 +1,10 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class NineLives implements AttributeModifierAbility, VisibleAbility {
     @Override
@@ -16,13 +13,13 @@ public class NineLives implements AttributeModifierAbility, VisibleAbility {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You have 1 less heart of health than humans.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You have 1 less heart of health than humans.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Nine Lives", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Nine Lives";
     }
 
     @Override

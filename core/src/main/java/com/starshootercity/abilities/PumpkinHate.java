@@ -1,8 +1,8 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,12 +16,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class PumpkinHate implements VisibleAbility, Listener {
+public class PumpkinHate implements Listener, VisibleAbility {
     private final Map<Player, List<Player>> ignoringPlayers = new HashMap<>();
 
     @EventHandler
@@ -79,32 +76,36 @@ public class PumpkinHate implements VisibleAbility, Listener {
         return data;
     }
 
+    private final String poison = "consume_and_poison";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), poison, Collections.singletonList("Poison the player when consuming pumpkin pie rather than preventing them from eating it"), ConfigManager.SettingType.BOOLEAN, false);
+    }
+
     @EventHandler
     public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
         runForAbility(event.getPlayer(), player -> {
             if (event.getItem().getType() == Material.PUMPKIN_PIE) {
                 event.setCancelled(true);
                 event.getItem().setAmount(event.getItem().getAmount() - 1);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 300, 2, false, true));
-                player.addPotionEffect(new PotionEffect(OriginsReborn.getNMSInvoker().getNauseaEffect(), 300, 1, false, true));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 1200, 1, false, true));
+                if (getConfigOption(OriginsReborn.getInstance(), poison, ConfigManager.SettingType.BOOLEAN)) {
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 300, 2, false, true));
+                    player.addPotionEffect(new PotionEffect(OriginsReborn.getNMSInvoker().getNauseaEffect(), 300, 1, false, true));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 1200, 1, false, true));
+                }
             }
         });
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor(
-                "You are afraid of pumpkins. For a good reason.",
-                OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You are afraid of pumpkins. For a good reason.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor(
-                "Scared of Gourds",
-                OriginSwapper.LineData.LineComponent.LineType.TITLE
-        );
+    public String title() {
+        return "Scared of Gourds";
     }
 
     @Override

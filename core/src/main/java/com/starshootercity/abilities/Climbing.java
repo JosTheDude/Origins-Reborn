@@ -17,7 +17,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +33,12 @@ public class Climbing implements FlightAllowingAbility, Listener, VisibleAbility
             runForAbility(p, player -> {
                 boolean anySolid = false;
                 boolean anysolidAbove = false;
-                for (BlockFace face : new ArrayList<BlockFace>() {{
-                    add(BlockFace.WEST);
-                    add(BlockFace.EAST);
-                    add(BlockFace.NORTH);
-                    add(BlockFace.SOUTH);
-                }}) {
+                for (BlockFace face : List.of(
+                    BlockFace.WEST,
+                    BlockFace.EAST,
+                    BlockFace.NORTH,
+                    BlockFace.SOUTH
+                )) {
                     anySolid = player.getLocation().getBlock().getRelative(face).isSolid();
                     anysolidAbove = player.getLocation().getBlock().getRelative(BlockFace.UP).getRelative(face).isSolid();
                     if (anySolid) break;
@@ -90,13 +89,13 @@ public class Climbing implements FlightAllowingAbility, Listener, VisibleAbility
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You are able to climb up any kind of wall, not just ladders.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You are able to climb up any kind of wall, not just ladders.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Climbing", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Climbing";
     }
 
     @Override

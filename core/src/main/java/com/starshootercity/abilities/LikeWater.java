@@ -1,6 +1,5 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,9 +10,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class LikeWater implements VisibleAbility, FlightAllowingAbility, Listener  {
+public class LikeWater implements FlightAllowingAbility, Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:like_water");
@@ -61,12 +58,12 @@ public class LikeWater implements VisibleAbility, FlightAllowingAbility, Listene
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("When underwater, you do not sink to the ground unless you want to.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "When underwater, you do not sink to the ground unless you want to.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Like Water", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Like Water";
     }
 }

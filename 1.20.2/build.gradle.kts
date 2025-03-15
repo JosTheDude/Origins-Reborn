@@ -13,6 +13,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(project(":version"))
     paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
+    implementation("xyz.jpenilla:reflection-remapper:0.1.1")
 }
 
 tasks.test {

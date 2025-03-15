@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":version"))
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
     paperweight.paperDevBundle("1.18.1-R0.1-SNAPSHOT")
+    implementation("xyz.jpenilla:reflection-remapper:0.1.1")
 }
 
 tasks.test {

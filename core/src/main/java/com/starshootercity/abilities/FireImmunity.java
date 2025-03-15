@@ -1,16 +1,14 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 
-public class FireImmunity implements VisibleAbility, Listener {
+public class FireImmunity implements Listener, VisibleAbility {
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
         runForAbility(event.getEntity(), player -> {
@@ -31,12 +29,12 @@ public class FireImmunity implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You are immune to all types of fire damage.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You are immune to all types of fire damage.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Fire Immunity", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Fire Immunity";
     }
 }

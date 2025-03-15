@@ -1,8 +1,8 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -22,12 +22,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class Phasing implements DependantAbility, VisibleAbility, FlightAllowingAbility, BreakSpeedModifierAbility, Listener {
+public class Phasing implements DependantAbility, FlightAllowingAbility, BreakSpeedModifierAbility, Listener, VisibleAbility {
 
     @Override
     public @NotNull Key getKey() {
@@ -40,13 +41,13 @@ public class Phasing implements DependantAbility, VisibleAbility, FlightAllowing
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("While phantomized, you can walk through solid material, except Obsidian.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "While phantomized, you can walk through solid material, except Obsidian.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Phasing", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Phasing";
     }
 
     @EventHandler
@@ -55,7 +56,7 @@ public class Phasing implements DependantAbility, VisibleAbility, FlightAllowing
         for (Player p : Bukkit.getOnlinePlayers()) {
             runForAbility(p, player -> {
                 boolean isInBlock = isInBlock(player);
-                setPhasing(player, (player.isOnGround() && player.isSneaking() && !UNPHASEABLE.contains(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType())) || (isInBlock));
+                setPhasing(player, (player.isOnGround() && player.isSneaking() && !impassable.contains(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType())) || (isInBlock));
                 OriginsReborn.getNMSInvoker().setNoPhysics(player, player.getGameMode() == GameMode.SPECTATOR || isPhasing.getOrDefault(player, false));
                 if (isPhasing.getOrDefault(player, false)) {
                     player.setFallDistance(0);
@@ -69,16 +70,30 @@ public class Phasing implements DependantAbility, VisibleAbility, FlightAllowing
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (isPhasing.getOrDefault(event.getPlayer(), false) && (isInBlock(event.getTo(), block -> UNPHASEABLE.contains(block.getType())))) {
+        if (isPhasing.getOrDefault(event.getPlayer(), false) && (isInBlock(event.getTo(), block -> impassable.contains(block.getType())))) {
             event.setCancelled(true);
         }
     }
 
-    private final List<Material> UNPHASEABLE = List.of(Material.OBSIDIAN, Material.BEDROCK);
+    @Override
+    public void initialize() {
+        String impassableBlocks = "impassable_blocks";
+
+        registerConfigOption(OriginsReborn.getInstance(), impassableBlocks, Collections.singletonList("Blocks you cannot pass through when phasing"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
+                Material.OBSIDIAN,
+                Material.CRYING_OBSIDIAN,
+                Material.BEDROCK
+        ));
+
+        impassable = getConfigOption(OriginsReborn.getInstance(), impassableBlocks, ConfigManager.SettingType.MATERIAL_LIST);
+    }
+
+    private List<Material> impassable;
 
     public boolean isInBlock(Entity entity) {
-        return isInBlock(entity.getLocation(), block -> block.getType().isSolid() && !UNPHASEABLE.contains(block.getType()));
+        return isInBlock(entity.getLocation(), block -> block.getType().isSolid() && !impassable.contains(block.getType()));
     }
+
     public boolean isInBlock(Location location, Predicate<Block> predicate) {
         boolean isInsideBlock = false;
         for (Location currentLocation : List.of(location.clone().add(0, 1, 0), location.clone())) {
@@ -98,15 +113,6 @@ public class Phasing implements DependantAbility, VisibleAbility, FlightAllowing
     }
 
     private final Map<Player, Boolean> isPhasing = new HashMap<>();
-
-    /*
-    @EventHandler
-    public void onInteract(PlayerInteractAtEntityEvent event) {
-        ClientboundSetCameraPacket packet = new ClientboundSetCameraPacket(((CraftEntity) event.getRightClicked()).getHandle());
-        ((CraftPlayer) event.getPlayer()).getHandle().connection.send(packet);
-    }
-
-     */
 
     @Override
     public boolean canFly(Player player) {

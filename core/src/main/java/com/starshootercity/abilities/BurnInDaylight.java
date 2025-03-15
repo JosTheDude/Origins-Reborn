@@ -2,7 +2,8 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
+import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -11,11 +12,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class BurnInDaylight implements VisibleAbility, DependantAbility, Listener {
+public class BurnInDaylight implements DependantAbility, Listener, VisibleAbility {
     @Override
     public DependencyType getDependencyType() {
         return DependencyType.INVERSE;
@@ -34,6 +36,14 @@ public class BurnInDaylight implements VisibleAbility, DependantAbility, Listene
                         boolean height = block.getY() < player.getLocation().getY();
                         boolean isInOverworld = player.getWorld().getEnvironment() == World.Environment.NORMAL;
                         boolean day = player.getWorld().isDayTime();
+
+                        if (!getConfigOption(OriginsReborn.getInstance(), burnWithHelmet, ConfigManager.SettingType.BOOLEAN)) {
+                            ItemStack helm = player.getInventory().getHelmet();
+                            if (helm != null) {
+                                if (!helm.getType().isAir()) return;
+                            }
+                        }
+
                         if (height && isInOverworld && day && !player.isInWaterOrRainOrBubbleColumn()) {
                             player.setFireTicks(Math.max(player.getFireTicks(), 60));
                         }
@@ -47,17 +57,24 @@ public class BurnInDaylight implements VisibleAbility, DependantAbility, Listene
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You begin to burn in daylight if you are not invisible.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You begin to burn in daylight if you are not invisible.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Photoallergic", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Photoallergic";
     }
 
     @Override
     public @NotNull Key getDependencyKey() {
         return Key.key("origins:phantomize");
+    }
+
+    private final String burnWithHelmet = "burn_with_helmet";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), burnWithHelmet, List.of("Whether the player should burn even when wearing a helmet"), ConfigManager.SettingType.BOOLEAN, true);
     }
 }

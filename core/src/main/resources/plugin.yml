@@ -1,5 +1,5 @@
 name: Origins-Reborn
-version: 2.5.3
+version: 2.6.0
 main: com.starshootercity.OriginsReborn
 description: Paper plugin inspired by the Origins mod by Apace
 api-version: '1.18'
@@ -13,6 +13,7 @@ softdepend:
   - Skript
   - WorldEdit
   - WorldGuard
+  - SkinsRestorer
 
 permissions:
   originsreborn.default:

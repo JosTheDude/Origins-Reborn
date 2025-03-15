@@ -11,6 +11,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Conduit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creeper;
@@ -99,13 +100,7 @@ public abstract class NMSInvoker implements Listener {
 
     public abstract void setWorldBorderOverlay(Player player, boolean show);
 
-    public abstract void setComments(String path, List<String> comments);
-
-    public NMSInvoker(FileConfiguration config) {
-        this.config = config;
-    }
-
-    protected final FileConfiguration config;
+    public abstract void setComments(FileConfiguration config, String path, List<String> comments);
 
     public abstract Component applyFont(Component component, Key font);
 
@@ -180,4 +175,10 @@ public abstract class NMSInvoker implements Listener {
     public abstract @Nullable Attribute getSweepingDamageRatioAttribute();
 
     public abstract @NotNull ItemMeta setCustomModelData(ItemMeta meta, int cmd);
+
+    public abstract int getConduitRange(Conduit conduit);
+
+    public void initialize() {
+
+    }
 }

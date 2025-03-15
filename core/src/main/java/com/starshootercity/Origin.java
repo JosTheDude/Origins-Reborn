@@ -4,9 +4,9 @@ import com.starshootercity.abilities.Ability;
 import com.starshootercity.abilities.AbilityRegister;
 import com.starshootercity.abilities.MultiAbility;
 import com.starshootercity.abilities.VisibleAbility;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,8 +40,8 @@ public class Origin {
 
     public boolean isUnchoosable(Player player) {
         if (unchoosable) return true;
-        String mode = OriginsReborn.getInstance().getConfig().getString("restrictions.reusing-origins", "NONE");
-        boolean same = OriginsReborn.getInstance().getConfig().getBoolean("restrictions.prevent-same-origins");
+        String mode = ConfigManager.getConfigValue(ConfigManager.Option.REUSING_ORIGINS);
+        boolean same = ConfigManager.getConfigValue(ConfigManager.Option.PREVENT_SAME_ORIGINS);
         if (max != -1) {
             int num = 0;
             for (String p : OriginSwapper.getOriginFileConfiguration().getKeys(false)) {
@@ -53,7 +53,7 @@ public class Origin {
         }
         if (same) {
             for (String p : OriginSwapper.getOriginFileConfiguration().getKeys(false)) {
-                if (OriginSwapper.getOriginFileConfiguration().getString(p, "").equals(getName().toLowerCase())) {
+                if (OriginSwapper.getOriginFileConfiguration().getString(p + "." + layer, "").equals(getName().toLowerCase())) {
                     return true;
                 }
             }
@@ -96,6 +96,10 @@ public class Origin {
         return displayName;
     }
 
+    static {
+        Translator.registerTranslation("team_format", "§7[§r%s§7] ");
+    }
+
     public Origin(String name, ItemStack icon, int position, @Range(from = 0, to = 3) int impact, @NotNull String displayName, List<Key> abilities, String description, OriginsAddon addon, boolean unchoosable, int priority, String permission, Integer cost, int max, String layer) {
         this.displayName = displayName;
         this.description = description;
@@ -104,18 +108,12 @@ public class Origin {
         this.cost = cost;
         this.max = max;
         this.layer = layer;
-        if (OriginsReborn.getInstance().getConfig().getBoolean("display.enable-prefixes")) {
+        if (ConfigManager.getConfigValue(ConfigManager.Option.DISPLAY_ENABLE_PREFIXES)) {
             Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
             Team oldTeam = scoreboard.getTeam(name);
             if (oldTeam != null) oldTeam.unregister();
             team = scoreboard.registerNewTeam(name);
-            team.displayName(Component.text("[")
-                            .color(NamedTextColor.DARK_GRAY)
-                            .append(Component.text(name)
-                                    .color(NamedTextColor.WHITE))
-                    .append(Component.text("] ")
-                            .color(NamedTextColor.DARK_GRAY)
-                    ));
+            team.displayName(Component.text(Translator.translate("team_format").formatted(name)));
         } else team = null;
         this.abilities = abilities;
         this.icon = icon;
@@ -171,15 +169,11 @@ public class Origin {
     }
 
     public String getName() {
-        return AddonLoader.getTextFor("origin." + addon.getNamespace() + "." + name.replace(" ", "_").toLowerCase() + ".name", name);
-    }
-
-    public String getActualName() {
         return name;
     }
 
     public String getDescription() {
-        return AddonLoader.getTextFor("origin." + addon.getNamespace() + "." + name.replace(" ", "_").toLowerCase() + ".description", description);
+        return description;
     }
 
     public ItemStack getIcon() {

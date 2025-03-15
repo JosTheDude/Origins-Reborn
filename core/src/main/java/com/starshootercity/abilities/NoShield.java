@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-public class NoShield implements VisibleAbilityV2, Listener {
+public class NoShield implements Listener, VisibleAbility {
     @EventHandler
     public void onServerTickEnd(ServerTickEndEvent event) {
         for (Player p : Bukkit.getOnlinePlayers()) {

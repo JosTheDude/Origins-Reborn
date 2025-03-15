@@ -1,6 +1,5 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -18,22 +17,20 @@ import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class ScareCreepers implements VisibleAbility, Listener {
+public class ScareCreepers implements Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:scare_creepers");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Creepers are scared of you and will only explode if you attack them first.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Creepers are scared of you and will only explode if you attack them first.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Catlike Appearance", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Catlike Appearance";
     }
 
     @EventHandler

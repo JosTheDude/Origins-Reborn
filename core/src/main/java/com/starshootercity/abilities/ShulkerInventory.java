@@ -1,10 +1,8 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.AddonLoader;
-import com.starshootercity.OriginSwapper;
-import com.starshootercity.OriginsReborn;
-import com.starshootercity.ShortcutUtils;
+import com.starshootercity.*;
 import com.starshootercity.events.PlayerLeftClickEvent;
+import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -26,31 +24,31 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
-public class ShulkerInventory implements VisibleAbility, Listener {
+public class ShulkerInventory implements Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:shulker_inventory");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You have access to an additional 9 slots of inventory, which keep the items on death.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You have access to an additional 9 slots of inventory, which keep the items on death.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Hoarder", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Hoarder";
     }
 
     private static File inventories;
     private static FileConfiguration inventoriesConfig;
+
     public ShulkerInventory() {
-        inventories = new File(OriginsReborn.getInstance().getDataFolder(), "inventories.yml");
+        inventories = new File(OriginsReborn.getInstance().getDataFolder(), "internals/inventories.yml");
         if (!inventories.exists()) {
             boolean ignore = inventories.getParentFile().mkdirs();
-            OriginsReborn.getInstance().saveResource("inventories.yml", false);
+            OriginsReborn.getInstance().saveResource("internals/inventories.yml", false);
         }
 
         inventoriesConfig = new AutosavingYamlConfiguration();
@@ -74,7 +72,7 @@ public class ShulkerInventory implements VisibleAbility, Listener {
         if (event.hasItem()) return;
         if (ShortcutUtils.isBedrockPlayer(event.getPlayer().getUniqueId())) {
             runForAbility(event.getPlayer(), player -> {
-                Inventory inventory = Bukkit.createInventory(player, InventoryType.DISPENSER, Component.text(AddonLoader.getTextFor("container.shulker_inventory_power", "Shulker Inventory")));
+                Inventory inventory = Bukkit.createInventory(player, InventoryType.DISPENSER, Component.text(translate("container")));
                 player.openInventory(inventory);
                 for (int i = 0; i < 9; i++) {
                     ItemStack item = getInventoriesConfig().getItemStack("%s.%s".formatted(player.getUniqueId().toString(), i));
@@ -85,6 +83,11 @@ public class ShulkerInventory implements VisibleAbility, Listener {
         }
     }
 
+    @Override
+    public void initialize() {
+        registerTranslation("container", "Shulker Inventory");
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player p) {
@@ -93,7 +96,7 @@ public class ShulkerInventory implements VisibleAbility, Listener {
                     if (event.getSlotType() == InventoryType.SlotType.ARMOR) {
                         if (event.getSlot() == 38) {
                             event.setCancelled(true);
-                            Inventory inventory = Bukkit.createInventory(player, InventoryType.DISPENSER, Component.text(AddonLoader.getTextFor("container.shulker_inventory_power", "Shulker Inventory")));
+                            Inventory inventory = Bukkit.createInventory(player, InventoryType.DISPENSER, Component.text(translate("container")));
                             player.openInventory(inventory);
                             for (int i = 0; i < 9; i++) {
                                 ItemStack item = getInventoriesConfig().getItemStack("%s.%s".formatted(player.getUniqueId().toString(), i));

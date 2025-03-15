@@ -1,25 +1,22 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class MoreKineticDamage implements VisibleAbility, Listener {
+public class MoreKineticDamage implements Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:more_kinetic_damage");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You take more damage from falling and flying into blocks.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You take more damage from falling and flying into blocks.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Brittle Bones", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Brittle Bones";
     }
 }

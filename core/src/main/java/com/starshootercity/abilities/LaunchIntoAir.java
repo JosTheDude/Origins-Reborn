@@ -1,8 +1,9 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
+import com.starshootercity.OriginsReborn;
 import com.starshootercity.cooldowns.CooldownAbility;
 import com.starshootercity.cooldowns.Cooldowns;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,22 +11,22 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collections;
 
-public class LaunchIntoAir implements VisibleAbility, Listener, CooldownAbility {
+public class LaunchIntoAir implements Listener, CooldownAbility, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:launch_into_air");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Every 30 seconds, you are able to launch about 20 blocks up into the air.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Every 30 seconds, you are able to launch about 20 blocks up into the air.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Gift of the Winds", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Gift of the Winds";
     }
 
     @EventHandler
@@ -35,7 +36,7 @@ public class LaunchIntoAir implements VisibleAbility, Listener, CooldownAbility 
             if (player.isGliding()) {
                 if (hasCooldown(player)) return;
                 setCooldown(player);
-                player.setVelocity(player.getVelocity().add(new Vector(0, 2, 0)));
+                player.setVelocity(player.getVelocity().add(new Vector(0, getConfigOption(OriginsReborn.getInstance(), launchStrength, ConfigManager.SettingType.FLOAT), 0)));
             }
         });
     }
@@ -43,5 +44,12 @@ public class LaunchIntoAir implements VisibleAbility, Listener, CooldownAbility 
     @Override
     public Cooldowns.CooldownInfo getCooldownInfo() {
         return new Cooldowns.CooldownInfo(600, "launch");
+    }
+
+    private final String launchStrength = "launch_strength";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), launchStrength, Collections.singletonList("How strong the launch effect should be"), ConfigManager.SettingType.FLOAT, 2f);
     }
 }

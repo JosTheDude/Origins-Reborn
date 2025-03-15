@@ -1,6 +1,9 @@
 package com.starshootercity;
 
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.papi.LayerPlaceholderExpansion;
+import com.starshootercity.util.ShortcutUtils;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.intellij.lang.annotations.Subst;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,7 +70,6 @@ public class AddonLoader {
         }
         registeredAddons.add(addon);
         loadOriginsFor(addon);
-        //prepareLanguagesFor(addon);
         if (addon.shouldAllowOriginSwapCommand() != null) allowOriginSwapChecks.add(addon.shouldAllowOriginSwapCommand());
         if (addon.shouldOpenSwapMenu() != null) openSwapMenuChecks.add(addon.shouldOpenSwapMenu());
         if (addon.getAbilityOverride() != null) abilityOverrideChecks.add(addon.getAbilityOverride());
@@ -90,32 +91,19 @@ public class AddonLoader {
             if (v == OriginsAddon.State.DENY) return false;
             else if (v == OriginsAddon.State.ALLOW) allowed = true;
         }
-        return allowed || player.hasPermission(OriginsReborn.getInstance().getConfig().getString("swap-command.permission", "originsreborn.admin"));
+        return allowed || player.hasPermission(ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_PERMISSION));
     }
 
     public static final List<OriginsAddon.SwapStateGetter> allowOriginSwapChecks = new ArrayList<>();
     public static final List<OriginsAddon.SwapStateGetter> openSwapMenuChecks = new ArrayList<>();
     public static final List<OriginsAddon.KeyStateGetter> abilityOverrideChecks = new ArrayList<>();
 
-    private static final Map<String, String> languageData = new HashMap<>();
-
-    public static @NotNull String getTextFor(String key, String fallback) {
-        String result = languageData.get(key);
-        return result == null ? fallback : result;
-    }
-
-    public static @Nullable String getTextFor(String key) {
-        return languageData.get(key);
-    }
-
     public static void reloadAddons() {
         origins.clear();
         originNameMap.clear();
-        languageData.clear();
         originFiles.clear();
         for (OriginsAddon addon : registeredAddons) {
             loadOriginsFor(addon);
-            //prepareLanguagesFor(addon);
         }
         sortOrigins();
     }
@@ -141,34 +129,6 @@ public class AddonLoader {
             bos.write(bytesIn, 0, read);
         }
         bos.close();
-    }
-
-    @SuppressWarnings("unused")
-    private static void prepareLanguagesFor(OriginsAddon addon) {
-        File langFolder = new File(addon.getDataFolder(), "lang");
-        boolean ignored = langFolder.mkdirs();
-        try (ZipInputStream inputStream = new ZipInputStream(new FileInputStream(addon.getFile()))) {
-            ZipEntry entry = inputStream.getNextEntry();
-            while (entry != null) {
-                if (entry.getName().startsWith("lang/") && entry.getName().endsWith(".json")) {
-                    extractFile(inputStream, langFolder.getParentFile().getAbsolutePath() + "/" + entry.getName());
-                }
-                entry = inputStream.getNextEntry();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String lang = OriginsReborn.getInstance().getConfig().getString("display.language", "en_us");
-        File[] files = langFolder.listFiles();
-        if (files == null) return;
-        for (File file : files) {
-            if (file.getName().equals(lang + ".json")) {
-                JSONObject object = ShortcutUtils.openJSONFile(file);
-                for (String s : object.keySet()) {
-                    languageData.put(s, object.getString(s));
-                }
-            }
-        }
     }
 
     private static void loadOriginsFor(OriginsAddon addon) {
@@ -200,9 +160,10 @@ public class AddonLoader {
     }
 
     private static void sortLayers() {
+        Map<String, Integer> data = ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_LAYER_ORDERS);
         layers.sort((o1, o2) -> {
-            int a1 = OriginsReborn.getInstance().getConfig().getInt("origin-selection.layers.%s".formatted(o1));
-            int a2 = OriginsReborn.getInstance().getConfig().getInt("origin-selection.layers.%s".formatted(o2));
+            int a1 = data.get(o1);
+            int a2 = data.get(o2);
             return a1 - a2;
         });
     }
@@ -214,26 +175,26 @@ public class AddonLoader {
 
         if (!OriginsReborn.getInstance().getConfig().contains("origin-selection.default-origin.%s".formatted(layer))) {
             OriginsReborn.getInstance().getConfig().set("origin-selection.default-origin.%s".formatted(layer), "NONE");
-            OriginsReborn.getNMSInvoker().setComments("origin-selection.default-origin", List.of("Default origin, automatically gives players this origin rather than opening the GUI when the player has no origin", "Should be the name of the origin file without the ending, e.g. for 'origin_name.json' the value should be 'origin_name'", "Disabled if set to an invalid name such as \"NONE\""));
+            OriginsReborn.getInstance().setComments("origin-selection.default-origin", List.of("Default origin, automatically gives players this origin rather than opening the GUI when the player has no origin", "Should be the name of the origin file without the ending, e.g. for 'origin_name.json' the value should be 'origin_name'", "Disabled if set to an invalid name such as \"NONE\""));
             OriginsReborn.getInstance().saveConfig();
         }
 
         if (!OriginsReborn.getInstance().getConfig().contains("origin-selection.layer-orders.%s".formatted(layer))) {
             OriginsReborn.getInstance().getConfig().set("origin-selection.layer-orders.%s".formatted(layer), priority);
-            OriginsReborn.getNMSInvoker().setComments("origin-section.layer-orders", List.of("Priorities for different origin 'layers' to be selected in, higher priority layers are selected first."));
+            OriginsReborn.getInstance().setComments("origin-section.layer-orders", List.of("Priorities for different origin 'layers' to be selected in, higher priority layers are selected first."));
             OriginsReborn.getInstance().saveConfig();
         }
 
         if (!OriginsReborn.getInstance().getConfig().contains("orb-of-origin.random.%s".formatted(layer))) {
             OriginsReborn.getInstance().getConfig().set("orb-of-origin.random.%s".formatted(layer), false);
-            OriginsReborn.getNMSInvoker().setComments("orb-of-origin.random", List.of("Randomise origin instead of opening the selector upon using the orb"));
+            OriginsReborn.getInstance().setComments("orb-of-origin.random", List.of("Randomise origin instead of opening the selector upon using the orb"));
             OriginsReborn.getInstance().saveConfig();
         }
 
         sortLayers();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new OriginsRebornPlaceholderExpansion(layer).register();
+            new LayerPlaceholderExpansion(layer).register();
         }
     }
 
@@ -304,7 +265,7 @@ public class AddonLoader {
                 }
             }
         }}, object.getString("description"), addon, unchoosable, object.has("priority") ? object.getInt("priority") : 1, permission, cost, max, layer);
-        String actualName = origin.getActualName().toLowerCase();
+        String actualName = origin.getName().toLowerCase();
         Origin previouslyRegisteredOrigin = originNameMap.get(name.replace("_", " "));
         if (previouslyRegisteredOrigin != null) {
             if (previouslyRegisteredOrigin.getPriority() > origin.getPriority()) {
@@ -324,7 +285,7 @@ public class AddonLoader {
      * @deprecated Origins-Reborn now has a 'layer' system, allowing for multiple origins to be set at once
      * @return The default origin for the 'origin' layer
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static @Nullable Origin getDefaultOrigin() {
         return getDefaultOrigin("origin");
     }

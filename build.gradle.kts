@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.starshootercity"
-version = "2.5.0"
+version = "2.6.0"
 
 repositories {
     mavenCentral()
@@ -35,6 +35,11 @@ dependencies {
     implementation(project(":1.21.3", "reobf"))
     implementation(project(":1.21.4", "reobf"))
     implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+    implementation("xyz.jpenilla:reflection-remapper:0.1.1")
+
+    implementation("org.eclipse.jetty:jetty-server:11.0.7")
+    implementation("org.eclipse.jetty:jetty-servlet:11.0.7")
+    implementation("org.eclipse.jetty:jetty-webapp:11.0.7")
 }
 
 tasks {

@@ -1,7 +1,6 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import com.starshootercity.cooldowns.CooldownAbility;
 import com.starshootercity.cooldowns.Cooldowns;
@@ -12,7 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
@@ -22,10 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MasterOfWebs implements CooldownAbility, FlightAllowingAbility, Listener, VisibleAbility {
     private final Map<Player, List<Entity>> glowingEntities = new HashMap<>();
@@ -160,20 +159,17 @@ public class MasterOfWebs implements CooldownAbility, FlightAllowingAbility, Lis
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You navigate cobweb perfectly, and are able to climb in them. When you hit an enemy in melee, they get stuck in cobweb for a while. Non-arthropods stuck in cobweb will be sensed by you. You are able to craft cobweb from string.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You navigate cobweb perfectly, and are able to climb in them. When you hit an enemy in melee, they get stuck in cobweb for a while. Non-arthropods stuck in cobweb will be sensed by you. You are able to craft cobweb from string.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Master of Webs", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Master of Webs";
     }
 
     public boolean isInCobweb(Entity entity) {
-        for (Block start : new ArrayList<Block>() {{
-            add(entity.getLocation().getBlock());
-            add(entity.getLocation().getBlock().getRelative(BlockFace.UP));
-        }}) {
+        for (Block start : Set.of(entity.getLocation().getBlock().getRelative(BlockFace.UP), entity.getLocation().getBlock())) {
             if (start.getType() == Material.COBWEB) return true;
             for (BlockFace face : BlockFace.values()) {
                 Block block = start.getRelative(face);

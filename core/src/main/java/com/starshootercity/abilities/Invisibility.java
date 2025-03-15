@@ -1,13 +1,10 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class Invisibility implements DependantAbility, VisibleAbility, VisibilityChangingAbility {
+public class Invisibility implements DependantAbility, VisibilityChangingAbility, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:invisibility");
@@ -19,13 +16,13 @@ public class Invisibility implements DependantAbility, VisibleAbility, Visibilit
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("While phantomized, you are invisible.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "While phantomized, you are invisible.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Invisibility", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Invisibility";
     }
 
     @Override

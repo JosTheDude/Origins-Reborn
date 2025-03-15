@@ -21,6 +21,7 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Conduit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
@@ -74,6 +75,12 @@ public class NMSInvokerV1_20_4 extends NMSInvoker {
     public @NotNull ItemMeta setCustomModelData(ItemMeta meta, int cmd) {
         meta.setCustomModelData(cmd);
         return meta;
+    }
+
+    @Override
+    public int getConduitRange(Conduit conduit) {
+        if (!conduit.isActive()) return 0;
+        return conduit.getRange();
     }
 
     @Override
@@ -184,10 +191,6 @@ public class NMSInvokerV1_20_4 extends NMSInvoker {
     @Override
     public @Nullable Attribute getTemptRangeAttribute() {
         return null;
-    }
-
-    public NMSInvokerV1_20_4(FileConfiguration config) {
-        super(config);
     }
 
     @Override
@@ -458,7 +461,7 @@ public class NMSInvokerV1_20_4 extends NMSInvoker {
     }
 
     @Override
-    public void setComments(String path, List<String> comments) {
+    public void setComments(FileConfiguration config, String path, List<String> comments) {
         config.setComments(path, comments);
     }
 }

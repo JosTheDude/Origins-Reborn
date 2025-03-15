@@ -1,9 +1,11 @@
 package com.starshootercity.commands;
 
 import com.starshootercity.*;
+import com.starshootercity.abilities.AbilityRegister;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.util.CompressionUtils;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -25,6 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 public class OriginCommand implements CommandExecutor, TabCompleter {
+
+    public OriginCommand() {
+        Translator.registerTranslation("command.no_swap_permission", "§cYou don't have permission to do this!");
+    }
+
     public static NamespacedKey key = OriginsReborn.getCooldowns().registerCooldown(OriginsReborn.getInstance(), new NamespacedKey(OriginsReborn.getInstance(), "swap-command-cooldown"), new Cooldowns.CooldownInfo(0));
 
     @Override
@@ -40,17 +47,17 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                         player.sendMessage(Component.text("You are on cooldown.").color(NamedTextColor.RED));
                         return true;
                     }
-                    if (OriginsReborn.getInstance().getConfig().getBoolean("swap-command.enabled")) {
-                        if (AddonLoader.allowOriginSwapCommand(player)) {
-                            String layer;
-                            if (args.length == 2) layer = args[1];
-                            else layer = "origin";
-                            OriginSwapper.openOriginSwapper(player, PlayerSwapOriginEvent.SwapReason.COMMAND, 0, 0, OriginsReborn.getInstance().isVaultEnabled(), layer);
-                        } else {
-                            sender.sendMessage(Component.text(OriginsReborn.getInstance().getConfig().getString("messages.no-swap-command-permissions", "§cYou don't have permission to do this!")));
-                        }
-                    } else {
+                    if (!ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_ENABLED)) {
                         sender.sendMessage(Component.text("This command has been disabled in the configuration").color(NamedTextColor.RED));
+                        return true;
+                    }
+                    if (AddonLoader.allowOriginSwapCommand(player)) {
+                        String layer;
+                        if (args.length == 2) layer = args[1];
+                        else layer = "origin";
+                        OriginSwapper.openOriginSwapper(player, PlayerSwapOriginEvent.SwapReason.COMMAND, 0, 0, OriginsReborn.getInstance().isVaultEnabled(), layer);
+                    } else {
+                        sender.sendMessage(Component.text(Translator.translate("command.no_swap_permission")));
                     }
                 } else {
                     sender.sendMessage(Component.text("This command can only be run by a player").color(NamedTextColor.RED));
@@ -65,8 +72,9 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                     }
                 }
                 AddonLoader.reloadAddons();
-                WidthGetter.reload();
                 OriginsReborn.getInstance().reloadConfig();
+                AbilityRegister.reloadAbilityConfig();
+                Translator.reloadTranslations();
                 return true;
             }
             case "exchange" -> {

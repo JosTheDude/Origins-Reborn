@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.minecraft.Optionull;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.RemoteChatSession;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
@@ -15,12 +16,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.entity.ConduitBlockEntity;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.Conduit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftConduit;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
@@ -38,7 +42,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.jpenilla.reflectionremapper.ReflectionRemapper;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -68,6 +74,38 @@ public class NMSInvokerV1_20_2 extends NMSInvoker {
     public @NotNull ItemMeta setCustomModelData(ItemMeta meta, int cmd) {
         meta.setCustomModelData(cmd);
         return meta;
+    }
+
+    @Override
+    public void initialize() {
+        String blocks = ReflectionRemapper.forReobfMappingsInPaperJar().remapFieldName(ConduitBlockEntity.class, "effectBlocks");
+        String active = ReflectionRemapper.forReobfMappingsInPaperJar().remapFieldName(ConduitBlockEntity.class, "isActive");
+        try {
+            effectBlocks = ConduitBlockEntity.class.getDeclaredField(blocks);
+            effectBlocks.setAccessible(true);
+            isActive = ConduitBlockEntity.class.getDeclaredField(active);
+            isActive.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Field effectBlocks;
+    private static Field isActive;
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public int getConduitRange(Conduit conduit) {
+        try {
+            ConduitBlockEntity tileEntity = ((CraftConduit) conduit).getTileEntity();
+            boolean active = (boolean) isActive.get(tileEntity);
+            if (!active) return 0;
+            List<BlockPos> list = (List<BlockPos>) effectBlocks.get(tileEntity);
+            int i = list.size();
+            return i / 7 * 16;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -178,9 +216,6 @@ public class NMSInvokerV1_20_2 extends NMSInvoker {
     @Override
     public @Nullable Attribute getTemptRangeAttribute() {
         return null;
-    }
-    public NMSInvokerV1_20_2(FileConfiguration config) {
-        super(config);
     }
 
     @Override
@@ -434,7 +469,7 @@ public class NMSInvokerV1_20_2 extends NMSInvoker {
     }
 
     @Override
-    public void setComments(String path, List<String> comments) {
+    public void setComments(FileConfiguration config, String path, List<String> comments) {
         config.setComments(path, comments);
     }
 }

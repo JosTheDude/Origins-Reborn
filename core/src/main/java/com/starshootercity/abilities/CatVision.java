@@ -1,10 +1,9 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import com.starshootercity.SavedPotionEffect;
-import com.starshootercity.ShortcutUtils;
+import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,10 +16,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class CatVision implements VisibleAbility, Listener {
+public class CatVision implements Listener, VisibleAbility {
     Map<Player, SavedPotionEffect> storedEffects = new HashMap<>();
 
     @EventHandler
@@ -79,12 +77,12 @@ public class CatVision implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You can slightly see in the dark when not in water.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You can slightly see in the dark when not in water.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Nocturnal", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Nocturnal";
     }
 }

@@ -1,8 +1,7 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.cooldowns.CooldownAbility;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.cooldowns.CooldownAbility;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import net.kyori.adventure.key.Key;
@@ -20,22 +19,20 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class ThrowEnderPearl implements VisibleAbility, Listener, CooldownAbility {
+public class ThrowEnderPearl implements Listener, CooldownAbility, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:throw_ender_pearl");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Whenever you want, you may throw an ender pearl which deals no damage, allowing you to teleport.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Whenever you want, you may throw an ender pearl which deals no damage, allowing you to teleport.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Teleportation", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Teleportation";
     }
 
     private final NamespacedKey falseEnderPearlKey = new NamespacedKey(OriginsReborn.getInstance(), "false-ender-pearl");

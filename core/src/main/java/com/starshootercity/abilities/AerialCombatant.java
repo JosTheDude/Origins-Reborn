@@ -1,19 +1,20 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
+import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collections;
 
 public class AerialCombatant implements VisibleAbility, Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         runForAbility(event.getDamager(), player -> {
-            if (player.isGliding()) event.setDamage(event.getDamage() * 2);
+            if (player.isGliding()) event.setDamage(event.getDamage() * getConfigOption(OriginsReborn.getInstance(), damageMultiplier, ConfigManager.SettingType.FLOAT));
         });
     }
 
@@ -23,12 +24,19 @@ public class AerialCombatant implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You deal substantially more damage while in Elytra flight.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You deal substantially more damage while in Elytra flight.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Aerial Combatant", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Aerial Combatant";
+    }
+
+    private final String damageMultiplier = "damage_multiplier";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), damageMultiplier, Collections.singletonList("Amount to multiply the damage by when gliding"), ConfigManager.SettingType.FLOAT, 2f);
     }
 }

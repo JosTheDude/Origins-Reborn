@@ -3,17 +3,15 @@ package com.starshootercity.cooldowns;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
-import com.starshootercity.ShortcutUtils;
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.ShortcutUtils;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -124,15 +122,17 @@ public class Cooldowns implements Listener {
         return getCooldown(player, key) > 0;
     }
 
-    public void setCooldown(Player player, NamespacedKey key, int cooldown, boolean isStatic) {
+    public void setCooldown(Player player, NamespacedKey key, int cooldown) {
+        if (cooldown == -1) return;
+        CooldownInfo info = registeredCooldowns.get(key);
         PersistentDataContainer pdc = player.getPersistentDataContainer().getOrDefault(cooldownKey, PersistentDataType.TAG_CONTAINER, player.getPersistentDataContainer().getAdapterContext().newPersistentDataContainer());
-        pdc.set(key, PersistentDataType.LONG, isStatic ? cooldown * 50L : Instant.now().toEpochMilli() + (cooldown * 50L));
+        pdc.set(key, PersistentDataType.LONG, info.isStatic ? cooldown * 50L : Instant.now().toEpochMilli() + (cooldown * 50L));
         player.getPersistentDataContainer().set(cooldownKey, PersistentDataType.TAG_CONTAINER, pdc);
     }
 
     public void setCooldown(Player player, NamespacedKey key) {
         CooldownInfo info = registeredCooldowns.get(key);
-        setCooldown(player, key, info.getCooldownTime(), info.isStatic());
+        setCooldown(player, key, info.getCooldownTime());
     }
 
     public record CooldownIconData(List<Component> barPieces, Component icon) {
@@ -197,9 +197,9 @@ public class Cooldowns implements Listener {
     public final Map<String, CooldownIconData> iconDataMap = new HashMap<>();
 
     public NamespacedKey registerCooldown(JavaPlugin instance, NamespacedKey key, CooldownInfo info) {
-        if (OriginsReborn.getInstance().getConfig().getBoolean("cooldowns.disable-all-cooldowns")) return key;
+        if (ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_ALL_COOLDOWNS)) return key;
 
-        if (info.getIcon() != null && OriginsReborn.getInstance().getConfig().getBoolean("cooldowns.show-cooldown-icons")) {
+        if (info.getIcon() != null && ConfigManager.getConfigValue(ConfigManager.Option.SHOW_COOLDOWN_ICONS)) {
             File icon = new File(instance.getDataFolder(), "icons/%s.png".formatted(info.getIcon()));
             if (!icon.exists()) {
                 boolean ignored = icon.getParentFile().mkdirs();
@@ -208,39 +208,11 @@ public class Cooldowns implements Listener {
             CooldownIconData iconData = makeCID(icon);
             iconDataMap.put(info.getIcon(), iconData);
         }
-        if (!fileConfiguration.contains(key.toString())) {
-            fileConfiguration.set(key.toString(), -1);
-            try {
-                fileConfiguration.save(file);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        int i = fileConfiguration.getInt(key.toString());
-        if (i != -1) info.setCooldownTime(i);
         registeredCooldowns.put(key, info);
         return key;
     }
 
-    private final File file;
-
-    private final FileConfiguration fileConfiguration;
-
     public Cooldowns() {
-        file = new File(OriginsReborn.getInstance().getDataFolder(), "cooldown-config.yml");
-        if (!file.exists()) {
-            boolean ignored = file.getParentFile().mkdirs();
-            OriginsReborn.getInstance().saveResource("cooldown-config.yml", false);
-        }
-
-        fileConfiguration = new YamlConfiguration();
-
-        try {
-            fileConfiguration.load(file);
-        } catch (InvalidConfigurationException | IOException e) {
-            throw new RuntimeException(e);
-        }
-
         File icon = new File(OriginsReborn.getInstance().getDataFolder(), "icons/empty_bar.png");
 
         if (!icon.exists()) {
@@ -306,17 +278,6 @@ public class Cooldowns implements Listener {
 
         public int getCooldownTime() {
             return cooldownTime;
-        }
-    }
-
-    public void resetFile() {
-        for (String key : fileConfiguration.getKeys(false)) {
-            fileConfiguration.set(key, null);
-        }
-        try {
-            fileConfiguration.save(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

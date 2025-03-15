@@ -1,7 +1,6 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -16,10 +15,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Claustrophobia implements VisibleAbility, Listener {
+public class Claustrophobia implements Listener, VisibleAbility {
     private final Map<Player, Integer> stacks = new HashMap<>();
 
     @EventHandler
@@ -51,12 +49,12 @@ public class Claustrophobia implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Being somewhere with a low ceiling for too long will weaken you and make you slower.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Being somewhere with a low ceiling for too long will weaken you and make you slower.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Claustrophobia", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Claustrophobia";
     }
 }

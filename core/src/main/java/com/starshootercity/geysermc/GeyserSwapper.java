@@ -3,6 +3,8 @@ package com.starshootercity.geysermc;
 import com.starshootercity.*;
 import com.starshootercity.commands.OriginCommand;
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.config.ConfigManager;
+import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
@@ -133,11 +135,11 @@ public class GeyserSwapper {
         if (origin == null) {
             List<Origin> origins = new ArrayList<>(AddonLoader.getOrigins(layer));
             origins.removeIf(origin1 -> origin1.isUnchoosable(player));
-            List<String> excludedOrigins = OriginsReborn.getInstance().getConfig().getStringList("origin-selection.random-option.exclude");
+            List<String> excludedOrigins = ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_RANDOM_OPTION_EXCLUDE);
             origins.removeIf(possibleOrigin -> excludedOrigins.contains(possibleOrigin.getName()));
             origin = origins.get(random.nextInt(origins.size()));
         }
-        OriginsReborn.getCooldowns().setCooldown(player, OriginCommand.key);
+        if (reason == PlayerSwapOriginEvent.SwapReason.COMMAND) OriginsReborn.getCooldowns().setCooldown(player, OriginCommand.key, ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_COOLDOWN));
         OriginSwapper.setOrigin(player, origin, reason, resetPlayer, layer);
     }
 
@@ -158,7 +160,7 @@ public class GeyserSwapper {
             form.title("Random Origin");
             List<Origin> origins = new ArrayList<>(AddonLoader.getOrigins(layer));
             origins.removeIf(origin1 -> origin1.isUnchoosable(player));
-            List<String> excludedOrigins = OriginsReborn.getInstance().getConfig().getStringList("origin-selection.random-option.exclude");
+            List<String> excludedOrigins = ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_RANDOM_OPTION_EXCLUDE);
             info.append("You'll be assigned one of the following:\n\n");
             for (Origin possibleOrigin : origins) {
                 if (!excludedOrigins.contains(possibleOrigin.getName())) {
@@ -167,8 +169,8 @@ public class GeyserSwapper {
             }
         }
         if (cost) {
-            String symbol = OriginsReborn.getInstance().getConfig().getString("swap-command.vault.currency-symbol", "$");
-            int amount = OriginsReborn.getInstance().getConfig().getInt("swap-command.vault.cost", 1000);
+            String symbol = ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_CURRENCY_SYMBOL);
+            int amount = ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_DEFAULT_COST);
             if (origin != null) {
                 if (origin.getCost() != null) amount = origin.getCost();
             }

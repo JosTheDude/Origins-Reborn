@@ -1,10 +1,10 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.OriginsReborn;
 import com.starshootercity.SavedPotionEffect;
-import com.starshootercity.ShortcutUtils;
+import com.starshootercity.util.ShortcutUtils;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
@@ -22,25 +22,34 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class WeakArms implements VisibleAbility, Listener {
-    private static final List<Material> naturalStones = new ArrayList<>() {{
-        add(Material.STONE);
-        add(Material.TUFF);
-        add(Material.ANDESITE);
-        add(Material.SANDSTONE);
-        add(Material.SMOOTH_SANDSTONE);
-        add(Material.RED_SANDSTONE);
-        add(Material.SMOOTH_RED_SANDSTONE);
-        add(Material.DEEPSLATE);
-        add(Material.BLACKSTONE);
-        add(Material.NETHERRACK);
-    }};
-    Map<Player, SavedPotionEffect> storedEffects = new HashMap<>();
+public class WeakArms implements Listener, VisibleAbility {
+
+    private List<Material> naturalStones;
+
+    @Override
+    public void initialize() {
+        String naturalStone = "natural_stones";
+        registerConfigOption(OriginsReborn.getInstance(), naturalStone, Collections.singletonList("Blocks that count as natural stone"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
+                Material.STONE,
+                Material.TUFF,
+                Material.GRANITE,
+                Material.DIORITE,
+                Material.ANDESITE,
+                Material.SANDSTONE,
+                Material.SMOOTH_SANDSTONE,
+                Material.RED_SANDSTONE,
+                Material.SMOOTH_RED_SANDSTONE,
+                Material.DEEPSLATE,
+                Material.BLACKSTONE,
+                Material.NETHERRACK
+        ));
+
+        naturalStones = getConfigOption(OriginsReborn.getInstance(), naturalStone, ConfigManager.SettingType.MATERIAL_LIST);
+    }
+
+    private final Map<Player, SavedPotionEffect> storedEffects = new HashMap<>();
 
     @EventHandler
     public void onServerTickEnd(ServerTickEndEvent event) {
@@ -130,13 +139,13 @@ public class WeakArms implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("When not under the effect of a strength potion, you can only mine natural stone if there are at most 2 other natural stone blocks adjacent to it.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "When not under the effect of a strength potion, you can only mine natural stone if there are at most 2 other natural stone blocks adjacent to it.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Weak Arms", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Weak Arms";
     }
 
 }

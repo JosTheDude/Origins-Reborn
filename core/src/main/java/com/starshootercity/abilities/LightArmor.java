@@ -1,9 +1,10 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.starshootercity.OriginSwapper;
-import com.starshootercity.ShortcutUtils;
+import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.ShortcutUtils;
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,38 +17,26 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
-public class LightArmor implements VisibleAbility, Listener {
+public class LightArmor implements Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:light_armor");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You can not wear any heavy armor (armor with protection values higher than chainmail).", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You can not wear any heavy armor (armor with protection values higher than chainmail).";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Need for Mobility", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Need for Mobility";
     }
 
-    private final List<Material> allowedTypes = List.of(
-        Material.CHAINMAIL_HELMET,
-        Material.CHAINMAIL_CHESTPLATE,
-        Material.CHAINMAIL_LEGGINGS,
-        Material.CHAINMAIL_BOOTS,
-        Material.LEATHER_HELMET,
-        Material.LEATHER_CHESTPLATE,
-        Material.LEATHER_LEGGINGS,
-        Material.LEATHER_BOOTS,
-        Material.GOLDEN_HELMET,
-        Material.GOLDEN_CHESTPLATE,
-        Material.GOLDEN_LEGGINGS,
-        Material.GOLDEN_BOOTS
-    );
+    private List<Material> allowedTypes;
 
     @EventHandler
     public void onPlayerSwapOrigin(PlayerSwapOriginEvent event) {
@@ -164,5 +153,26 @@ public class LightArmor implements VisibleAbility, Listener {
 
     public boolean isArmor(Material material) {
         return MaterialTags.HELMETS.isTagged(material) || MaterialTags.CHESTPLATES.isTagged(material) || MaterialTags.LEGGINGS.isTagged(material) || MaterialTags.BOOTS.isTagged(material);
+    }
+
+    @Override
+    public void initialize() {
+        String allowedArmor = "allowed_armor";
+        registerConfigOption(OriginsReborn.getInstance(), allowedArmor, Collections.singletonList("Armor allowed to be equipped"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
+                Material.CHAINMAIL_HELMET,
+                Material.CHAINMAIL_CHESTPLATE,
+                Material.CHAINMAIL_LEGGINGS,
+                Material.CHAINMAIL_BOOTS,
+                Material.LEATHER_HELMET,
+                Material.LEATHER_CHESTPLATE,
+                Material.LEATHER_LEGGINGS,
+                Material.LEATHER_BOOTS,
+                Material.GOLDEN_HELMET,
+                Material.GOLDEN_CHESTPLATE,
+                Material.GOLDEN_LEGGINGS,
+                Material.GOLDEN_BOOTS
+        ));
+
+        allowedTypes = getConfigOption(OriginsReborn.getInstance(), allowedArmor, ConfigManager.SettingType.MATERIAL_LIST);
     }
 }

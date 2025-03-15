@@ -1,6 +1,7 @@
 package com.starshootercity;
 
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,18 +26,7 @@ public class OrbOfOrigin implements Listener {
     public static NamespacedKey orbKey = new NamespacedKey(OriginsReborn.getInstance(), "orb-of-origin");
     public static NamespacedKey updatedKey = new NamespacedKey(OriginsReborn.getInstance(), "updated-orb");
 
-    public static final ItemStack orb = new ItemStack(Material.NAUTILUS_SHELL) {{
-        ItemMeta meta = getItemMeta();
-        meta.getPersistentDataContainer().set(orbKey, OriginSwapper.BooleanPDT.BOOLEAN, true);
-        meta.getPersistentDataContainer().set(updatedKey, OriginSwapper.BooleanPDT.BOOLEAN, true);
-        meta = OriginsReborn.getNMSInvoker().setCustomModelData(meta, 1);
-        meta.displayName(
-                Component.text(AddonLoader.getTextFor("item.origins.orb_of_origin", "Orb of Origin"))
-                        .color(NamedTextColor.AQUA)
-                        .decoration(TextDecoration.ITALIC, false)
-        );
-        setItemMeta(meta);
-    }};
+    public static ItemStack orb;
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -66,6 +56,23 @@ public class OrbOfOrigin implements Listener {
 
     @SuppressWarnings("unchecked")
     public OrbOfOrigin() {
+        orb = new ItemStack(Material.NAUTILUS_SHELL);
+
+        String orbOfOrigin = "item.orb_of_origin";
+
+        Translator.registerTranslation(orbOfOrigin, "Orb of Origin");
+        ItemMeta meta = orb.getItemMeta();
+        meta.getPersistentDataContainer().set(orbKey, OriginSwapper.BooleanPDT.BOOLEAN, true);
+        meta.getPersistentDataContainer().set(updatedKey, OriginSwapper.BooleanPDT.BOOLEAN, true);
+        meta = OriginsReborn.getNMSInvoker().setCustomModelData(meta, 1);
+        meta.displayName(
+                Component.text(Translator.translate(orbOfOrigin))
+                        .color(NamedTextColor.AQUA)
+                        .decoration(TextDecoration.ITALIC, false)
+        );
+        orb.setItemMeta(meta);
+
+
         Bukkit.removeRecipe(orbKey);
         FileConfiguration config = OriginsReborn.getInstance().getConfig();
         if (config.getBoolean("orb-of-origin.enable-recipe")) {
@@ -111,7 +118,7 @@ public class OrbOfOrigin implements Listener {
                 if (heldMeta != null && heldMeta.getPersistentDataContainer().has(orbKey, OriginSwapper.BooleanPDT.BOOLEAN)) hand = EquipmentSlot.HAND;
                 if (hand == EquipmentSlot.HAND) event.getPlayer().swingMainHand();
                 else event.getPlayer().swingOffHand();
-                if (OriginsReborn.getInstance().getConfig().getBoolean("orb-of-origin.consume")) {
+                if (ConfigManager.getConfigValue(ConfigManager.Option.ORB_OF_ORIGIN_CONSUME)) {
                     item.setAmount(item.getAmount() - 1);
                     event.getPlayer().getInventory().setItemInMainHand(item);
                 }

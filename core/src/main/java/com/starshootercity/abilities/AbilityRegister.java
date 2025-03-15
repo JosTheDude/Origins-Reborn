@@ -1,8 +1,10 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.*;
+import com.starshootercity.OriginsAddon;
+import com.starshootercity.OriginsReborn;
 import com.starshootercity.commands.FlightToggleCommand;
 import com.starshootercity.cooldowns.CooldownAbility;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Bukkit;
@@ -28,44 +30,102 @@ import java.util.Map;
 
 public class AbilityRegister {
     public static Map<Key, Ability> abilityMap = new HashMap<>();
+    public static Map<Key, OriginsAddon> pluginMap = new HashMap<>();
     public static Map<Key, DependencyAbility> dependencyAbilityMap = new HashMap<>();
     public static Map<Key, List<MultiAbility>> multiAbilityMap = new HashMap<>();
+    public static List<BreakSpeedModifierAbility> breakSpeedModifierAbilities = new ArrayList<>();
+    public static List<SkinChangingAbility> skinChangingAbilities = new ArrayList<>();
+
+    public static Map<Key, List<AbilityRunnable>> runOnRegisters = new HashMap<>();
+
+    private static File abilityFile;
+    private static FileConfiguration abilityFileConfig;
+
+    public static <T> void registerConfigOption(OriginsAddon addon, Ability ability, ConfigManager.SettingType<T> settingType, String path, List<String> comments, T defaultValue) {
+        String pathToUse = addon.getNamespace() + "." + ability.getKey().value() + "." + path;
+        if (abilityFileConfig.contains(pathToUse)) return;
+
+        settingType.set(abilityFileConfig, pathToUse, defaultValue);
+
+        OriginsReborn.getNMSInvoker().setComments(abilityFileConfig, pathToUse, comments);
+
+        try {
+            abilityFileConfig.save(abilityFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final Map<String, Object> cache = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getConfigOption(OriginsAddon addon, Ability ability, ConfigManager.SettingType<T> settingType, String path) {
+        return (T) cache.computeIfAbsent(
+                addon.getNamespace() + "." + ability.getKey().value() + "." + path,
+                s -> settingType.get(abilityFileConfig, s));
+    }
+
+    public static void reloadAbilityConfig() {
+        cache.clear();
+        try {
+            abilityFileConfig.load(abilityFile);
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void setupAbilityConfig() {
+        abilityFile = new File(OriginsReborn.getInstance().getDataFolder(), "ability-config.yml");
+
+        if (!abilityFile.exists()) {
+            boolean ignored = abilityFile.getParentFile().mkdirs();
+            OriginsReborn.getInstance().saveResource("ability-config.yml", false);
+        }
+
+        abilityFileConfig = new YamlConfiguration();
+
+        reloadAbilityConfig();
+    }
 
     public static void registerAbility(Ability ability, JavaPlugin instance) {
+
+        if (ability instanceof SkinChangingAbility skinChangingAbility) {
+            if (!OriginsReborn.isSkinManagerEnabled() && !skinChangingAbility.forceEnabled()) return;
+            skinChangingAbilities.add(skinChangingAbility);
+        }
+
+        if (instance instanceof OriginsAddon addon) {
+            pluginMap.put(ability.getKey(), addon);
+        }
+
+        if (runOnRegisters.containsKey(ability.getKey())) {
+            for (AbilityRunnable r : runOnRegisters.get(ability.getKey())) r.run(ability);
+        }
+
+        ability.initialize();
+
         if (ability instanceof DependencyAbility dependencyAbility) {
             dependencyAbilityMap.put(ability.getKey(), dependencyAbility);
         }
         if (ability instanceof MultiAbility multiAbility) {
             for (Ability a : multiAbility.getAbilities()) {
-                List<MultiAbility> abilities = multiAbilityMap.getOrDefault(a.getKey(), new ArrayList<>());
-                abilities.add(multiAbility);
-                multiAbilityMap.put(a.getKey(), abilities);
+                multiAbilityMap.computeIfAbsent(a.getKey(), key -> new ArrayList<>()).add(multiAbility);
             }
         }
         if (ability instanceof CooldownAbility cooldownAbility) {
-            OriginsReborn.getCooldowns().registerCooldown(instance, cooldownAbility.getCooldownKey(), cooldownAbility.getCooldownInfo());
+            cooldownAbility.setupCooldownConfig(instance);
         }
         if (ability instanceof Listener listener) {
             Bukkit.getPluginManager().registerEvents(listener, instance);
         }
+        if (ability instanceof VisibleAbility visibleAbility) {
+            visibleAbility.setupTranslatedText();
+        }
         if (ability instanceof AttributeModifierAbility ama) {
-            if (!attributeModifierAbilityFileConfig.contains(ama.getKey().toString())) {
-                attributeModifierAbilityFileConfig.set("%s.value".formatted(ama.getKey()), "x");
-                attributeModifierAbilityFileConfig.set("%s.operation".formatted(ama.getKey()), "default");
-                try {
-                    attributeModifierAbilityFileConfig.save(attributeModifierAbilityFile);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (attributeModifierAbilityFileConfig.get("%s.value".formatted(ama.getKey()), "default").equals("default")) {
-                attributeModifierAbilityFileConfig.set("%s.value".formatted(ama.getKey()), "x");
-                try {
-                    attributeModifierAbilityFileConfig.save(attributeModifierAbilityFile);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            ama.setupAttributeConfig();
+        }
+        if (ability instanceof BreakSpeedModifierAbility breakSpeedModifierAbility) {
+            breakSpeedModifierAbilities.add(breakSpeedModifierAbility);
         }
         abilityMap.put(ability.getKey(), ability);
     }
@@ -74,7 +134,7 @@ public class AbilityRegister {
     /**
      * @deprecated Testing abilities is now contained in the Ability interface
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void runForAbility(Entity entity, Key key, Runnable runnable) {
         runForAbility(entity, key, runnable, () -> {});
     }
@@ -82,7 +142,7 @@ public class AbilityRegister {
     /**
      * @deprecated Testing abilities is now contained in the Ability interface
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static boolean hasAbility(Player player, Key key) {
         return hasAbility(player, key, false);
     }
@@ -90,7 +150,7 @@ public class AbilityRegister {
     /**
      * @deprecated Testing abilities is now contained in the Ability interface
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static boolean hasAbility(Player player, Key key, boolean ignoreOverrides) {
         if (!abilityMap.containsKey(key)) return false;
         return abilityMap.get(key).hasAbility(player);
@@ -99,7 +159,7 @@ public class AbilityRegister {
     /**
      * @deprecated Testing abilities is now contained in the Ability interface
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void runForAbility(Entity entity, Key key, Runnable runnable, Runnable other) {
         if (entity == null) return;
         String worldId = entity.getWorld().getName();
@@ -116,7 +176,7 @@ public class AbilityRegister {
     /**
      * @deprecated Testing abilities is now contained in the Ability interface
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void runWithoutAbility(Entity entity, Key key, Runnable runnable) {
         runForAbility(entity, key, () -> {}, runnable);
     }
@@ -204,23 +264,7 @@ public class AbilityRegister {
         OriginsReborn.getNMSInvoker().sendEntityData(player, target, data);
     }
 
-    public static FileConfiguration attributeModifierAbilityFileConfig;
-
-    private static File attributeModifierAbilityFile;
-
-    public static void setupAMAF() {
-        attributeModifierAbilityFile = new File(OriginsReborn.getInstance().getDataFolder(), "attribute-modifier-ability-config.yml");
-        if (!attributeModifierAbilityFile.exists()) {
-            boolean ignored = attributeModifierAbilityFile.getParentFile().mkdirs();
-            OriginsReborn.getInstance().saveResource("attribute-modifier-ability-config.yml", false);
-        }
-
-        attributeModifierAbilityFileConfig = new YamlConfiguration();
-
-        try {
-            attributeModifierAbilityFileConfig.load(attributeModifierAbilityFile);
-        } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
-        }
+    public interface AbilityRunnable {
+        void run(Ability ability);
     }
 }

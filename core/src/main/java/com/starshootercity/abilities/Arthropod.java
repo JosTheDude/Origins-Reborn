@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -9,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Random;
 
 public class Arthropod implements Ability, Listener {
@@ -27,9 +29,18 @@ public class Arthropod implements Ability, Listener {
                 runForAbility(event.getEntity(), player -> {
                     int level = entity.getEquipment().getItemInMainHand().getEnchantmentLevel(OriginsReborn.getNMSInvoker().getBaneOfArthropodsEnchantment());
                     event.setDamage(event.getDamage() + 1.25 * level);
-                    player.addPotionEffect(new PotionEffect(OriginsReborn.getNMSInvoker().getSlownessEffect(), (int) (20 * random.nextDouble(1, 1 + (0.5 * level))), 3, false, true));
+                    if (getConfigOption(OriginsReborn.getInstance(), applySlowness, ConfigManager.SettingType.BOOLEAN)) {
+                        player.addPotionEffect(new PotionEffect(OriginsReborn.getNMSInvoker().getSlownessEffect(), (int) (20 * random.nextDouble(1, 1 + (0.5 * level))), 3, false, true));
+                    }
                 });
             }
         }
+    }
+
+    private final String applySlowness = "apply_slowness";
+
+    @Override
+    public void initialize() {
+        registerConfigOption(OriginsReborn.getInstance(), applySlowness, Collections.singletonList("Apply Slowness when using Bane of Arthropods on players with the Arthropod ability"), ConfigManager.SettingType.BOOLEAN, true);
     }
 }

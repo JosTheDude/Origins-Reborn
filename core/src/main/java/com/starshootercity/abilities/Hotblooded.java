@@ -1,6 +1,5 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,9 +7,7 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class Hotblooded implements VisibleAbility, Listener {
+public class Hotblooded implements Listener, VisibleAbility {
     @EventHandler
     public void onEntityPotionEffect(EntityPotionEffectEvent event) {
         runForAbility(event.getEntity(), player -> {
@@ -28,12 +25,12 @@ public class Hotblooded implements VisibleAbility, Listener {
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("Due to your hot body, venoms burn up, making you immune to poison and hunger status effects.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "Due to your hot body, venoms burn up, making you immune to poison and hunger status effects.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Hotblooded", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Hotblooded";
     }
 }

@@ -1,6 +1,5 @@
 package com.starshootercity.abilities;
 
-import com.starshootercity.OriginSwapper;
 import com.starshootercity.commands.FlightToggleCommand;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;
@@ -11,22 +10,20 @@ import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class Elytra implements VisibleAbility, FlightAllowingAbility, Listener {
+public class Elytra implements FlightAllowingAbility, Listener, VisibleAbility {
     @Override
     public @NotNull Key getKey() {
         return Key.key("origins:elytra");
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getDescription() {
-        return OriginSwapper.LineData.makeLineFor("You have Elytra wings without needing to equip any.", OriginSwapper.LineData.LineComponent.LineType.DESCRIPTION);
+    public String description() {
+        return "You have Elytra wings without needing to equip any.";
     }
 
     @Override
-    public @NotNull List<OriginSwapper.LineData.LineComponent> getTitle() {
-        return OriginSwapper.LineData.makeLineFor("Winged", OriginSwapper.LineData.LineComponent.LineType.TITLE);
+    public String title() {
+        return "Winged";
     }
 
     @EventHandler
