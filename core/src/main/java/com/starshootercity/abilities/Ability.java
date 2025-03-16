@@ -69,13 +69,8 @@ public interface Ability {
         }
 
         List<Origin> origins = OriginSwapper.getOrigins(player);
-        boolean hasAbility = false;
-        for (Origin origin : origins) {
-            if (origin.hasAbility(getKey())) {
-                hasAbility = true;
-                break;
-            }
-        }
+        boolean hasAbility = origins.stream().anyMatch(origin -> origin.hasAbility(getKey()));
+
         for (MultiAbility multiAbility : AbilityRegister.multiAbilityMap.getOrDefault(getKey(), Collections.emptyList())) {
             if (multiAbility.hasAbility(player)) hasAbility = true;
         }

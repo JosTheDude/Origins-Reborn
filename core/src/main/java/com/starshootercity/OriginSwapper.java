@@ -751,6 +751,7 @@ public class OriginSwapper implements Listener {
             originFileConfiguration.set(player.getUniqueId() + "." + layer, null);
             saveOrigins();
             resetPlayer(player, swapOriginEvent.isResetPlayer());
+            loadOrigins(player);
             return;
         }
         if (swapOriginEvent.getNewOrigin().getTeam() != null) {

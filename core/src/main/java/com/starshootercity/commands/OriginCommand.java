@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OriginCommand implements CommandExecutor, TabCompleter {
 
@@ -153,6 +150,26 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                 OriginSwapper.setOrigin(player, origin, PlayerSwapOriginEvent.SwapReason.COMMAND, false, layer);
                 return true;
             }
+            case "clear" -> {
+                if (sender instanceof Player player) {
+                    if (!player.hasPermission("originsreborn.admin")) {
+                        sender.sendMessage(Component.text("You don't have permission to do this!").color(NamedTextColor.RED));
+                        return true;
+                    }
+                }
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("Invalid command. Usage: /origin clear <player> <layer>").color(NamedTextColor.RED));
+                    return true;
+                }
+                String layer = args[2];
+                Player player = Bukkit.getPlayer(args[1]);
+                if (player == null) {
+                    sender.sendMessage(Component.text("Invalid command. Usage: /origin clear <player> <layer>").color(NamedTextColor.RED));
+                    return true;
+                }
+                OriginSwapper.setOrigin(player, null, PlayerSwapOriginEvent.SwapReason.COMMAND, false, layer);
+                return true;
+            }
             case "orb" -> {
                 Player player;
                 if (sender instanceof Player p) {
@@ -258,11 +275,12 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                 r.add("export");
                 r.add("import");
                 r.add("pack");
+                r.add("clear");
                 yield r;
             }
             case 2 -> {
                 switch (args[0]) {
-                    case "set", "orb", "exchange" -> {
+                    case "set", "orb", "exchange", "clear" -> {
                         yield new ArrayList<>() {{
                             for (Player player : Bukkit.getOnlinePlayers()) {
                                 add(player.getName());
@@ -292,8 +310,8 @@ public class OriginCommand implements CommandExecutor, TabCompleter {
                 }
             }
             case 3 -> {
-                if (args[0].equals("set")) {
-                    yield new ArrayList<>(AddonLoader.layers);
+                if (Set.of("set", "clear").contains(args[0])) {
+                    yield AddonLoader.layers;
                 } else yield List.of();
             }
             case 4 -> {
