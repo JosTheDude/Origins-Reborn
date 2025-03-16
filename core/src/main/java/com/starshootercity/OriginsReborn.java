@@ -7,6 +7,7 @@ import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import com.starshootercity.packetsenders.*;
 import com.starshootercity.skript.SkriptInitializer;
+import com.starshootercity.util.Metrics;
 import com.starshootercity.util.config.ConfigManager;
 import com.starshootercity.util.SkinManager;
 import com.starshootercity.util.WorldGuardHook;
@@ -129,6 +130,9 @@ public class OriginsReborn extends OriginsAddon {
     @Override
     public void onRegister() {
         instance = this;
+
+        int pluginId = 25114;
+        new Metrics(this, pluginId);
 
         // Used for legacy updater
         freshAir = new FreshAir();
