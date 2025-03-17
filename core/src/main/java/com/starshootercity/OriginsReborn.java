@@ -19,7 +19,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OriginsReborn extends OriginsAddon {
 
@@ -132,7 +134,37 @@ public class OriginsReborn extends OriginsAddon {
         instance = this;
 
         int pluginId = 25114;
-        new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, pluginId);
+
+        metrics.addCustomChart(new Metrics.SimplePie(
+                "addon_count",
+                () -> String.valueOf(AddonLoader.registeredAddons.size()-1)
+        ));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie(
+                "addons",
+                () -> {
+                    Map<String, Integer> data = new HashMap<>();
+                    for (OriginsAddon addon : AddonLoader.registeredAddons) {
+                        data.put(addon.getName(), 1);
+                    }
+                    return data;
+                }
+        ));
+
+        metrics.addCustomChart(new Metrics.AdvancedPie(
+                "origins",
+                () -> {
+                    Map<String, Integer> data = new HashMap<>();
+                    for (String layer : AddonLoader.layers) {
+                        for (Origin origin : AddonLoader.getOrigins(layer)) {
+                            String info = "%s - %s".formatted(origin.getNameForDisplay(), layer);
+                            data.put(info, 1);
+                        }
+                    }
+                    return data;
+                }
+        ));
 
         // Used for legacy updater
         freshAir = new FreshAir();
@@ -150,6 +182,11 @@ public class OriginsReborn extends OriginsAddon {
             }
         }
 
+        metrics.addCustomChart(new Metrics.SimplePie(
+                "skinsrestorer_hook_enabled",
+                () -> String.valueOf(skinManagerEnabled)
+        ));
+
         if (worldGuardHookInitialized) WorldGuardHook.completeInitialize();
 
         Translator.initialize(this);
@@ -162,6 +199,12 @@ public class OriginsReborn extends OriginsAddon {
                 getLogger().warning("Vault is missing, origin swaps will not cost currency");
             }
         } else vaultEnabled = false;
+
+        metrics.addCustomChart(new Metrics.SimplePie(
+                "vault_hook_enabled",
+                () -> String.valueOf(vaultEnabled)
+        ));
+
         cooldowns = new Cooldowns();
         if (!getConfig().getBoolean("cooldowns.disable-all-cooldowns") && getConfig().getBoolean("cooldowns.show-cooldown-icons")) {
             Bukkit.getPluginManager().registerEvents(cooldowns, this);
@@ -188,6 +231,8 @@ public class OriginsReborn extends OriginsAddon {
 
         PluginCommand command = getCommand("origin");
         if (command != null) command.setExecutor(new OriginCommand());
+
+        AbilityRegister.initializeRepeatingTasks();
     }
 
     @Override

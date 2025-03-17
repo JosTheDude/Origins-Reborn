@@ -20,6 +20,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class AbilityRegister {
     public static List<BreakSpeedModifierAbility> breakSpeedModifierAbilities = new ArrayList<>();
     public static List<AttributeModifierAbility> attributeModifierAbilities = new ArrayList<>();
     public static List<SkinChangingAbility> skinChangingAbilities = new ArrayList<>();
+    public static List<AsyncRepeatingAbility> asyncRepeatingAbilities = new ArrayList<>();
 
     public static Map<Key, List<AbilityRunnable>> runOnRegisters = new HashMap<>();
 
@@ -88,6 +90,28 @@ public class AbilityRegister {
         reloadAbilityConfig();
     }
 
+    public static void initializeRepeatingTasks() {
+        // Waits until the first tick so all abilities are registered
+        Bukkit.getScheduler().scheduleSyncDelayedTask(OriginsReborn.getInstance(), () -> {
+            for (AsyncRepeatingAbility ability : asyncRepeatingAbilities) {
+                ability.start();
+            }
+            // One element array used so that it can be incremented inside scheduler
+            int[] tick = {0};
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (AsyncRepeatingAbility ability : asyncRepeatingAbilities) {
+                        // Only runs the code at the required interval
+                        if (tick[0] % ability.interval() == 0) ability.run();
+                    }
+                    // Increases tick number
+                    tick[0]++;
+                }
+            }.runTaskTimerAsynchronously(OriginsReborn.getInstance(), 0, 1);
+        });
+    }
+
     public static void registerAbility(Ability ability, JavaPlugin instance) {
 
         if (ability instanceof SkinChangingAbility skinChangingAbility) {
@@ -107,6 +131,9 @@ public class AbilityRegister {
 
         if (ability instanceof DependencyAbility dependencyAbility) {
             dependencyAbilityMap.put(ability.getKey(), dependencyAbility);
+        }
+        if (ability instanceof AsyncRepeatingAbility ara) {
+            asyncRepeatingAbilities.add(ara);
         }
         if (ability instanceof MultiAbility multiAbility) {
             for (Ability a : multiAbility.getAbilities()) {

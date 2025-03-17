@@ -173,6 +173,9 @@ public class AddonLoader {
         layers.add(layer);
         layerKeys.put(layer, new NamespacedKey(addon, layer.toLowerCase().replace(" ", "_")));
 
+        // This code doesn't use the config manager as it's a very specific case where the config must be updated to an unknown value
+        // It would be useless to add a specific option to the manager for this one use case, as it works as-is
+
         if (!OriginsReborn.getInstance().getConfig().contains("origin-selection.default-origin.%s".formatted(layer))) {
             OriginsReborn.getInstance().getConfig().set("origin-selection.default-origin.%s".formatted(layer), "NONE");
             OriginsReborn.getInstance().setComments("origin-selection.default-origin", List.of("Default origin, automatically gives players this origin rather than opening the GUI when the player has no origin", "Should be the name of the origin file without the ending, e.g. for 'origin_name.json' the value should be 'origin_name'", "Disabled if set to an invalid name such as \"NONE\""));

@@ -67,7 +67,7 @@ public class GeyserSwapper {
 
         }
 
-        boolean enableRandom = OriginsReborn.getInstance().getConfig().getBoolean("origin-selection.random-option.enabled");
+        boolean enableRandom = ConfigManager.getConfigValue(ConfigManager.Option.ORIGIN_SELECTION_RANDOM_OPTION_ENABLED);
         if (enableRandom) form.button("Random", FormImage.Type.URL, "https://static.wikia.nocookie.net/origins-smp/images/1/13/Origin_Orb.png/revision/latest?cb=20210411202749");
 
         sendForm(player.getUniqueId(), form
@@ -92,13 +92,13 @@ public class GeyserSwapper {
 
     public static void setOrigin(Player player, Origin origin, PlayerSwapOriginEvent.SwapReason reason, boolean cost, String layer) {
         if (OriginsReborn.getInstance().isVaultEnabled() && cost) {
-            int amount = OriginsReborn.getInstance().getConfig().getInt("swap-command.vault.cost", 1000);
+            int amount = ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_DEFAULT_COST);
             if (origin.getCost() != null) amount = origin.getCost();
             Economy economy = OriginsReborn.getInstance().getEconomy();
             if (economy.has(player, amount)) {
                 economy.withdrawPlayer(player, amount);
             } else {
-                String symbol = OriginsReborn.getInstance().getConfig().getString("swap-command.vault.currency-symbol", "$");
+                String symbol = ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_CURRENCY_SYMBOL);
                 player.sendMessage(Component.text("You need %s%s to swap your origin!".formatted(symbol, amount)));
                 return;
             }
@@ -126,7 +126,7 @@ public class GeyserSwapper {
             orbCooldown.put(player, System.currentTimeMillis());
             if (hand == EquipmentSlot.HAND) player.swingMainHand();
             else player.swingOffHand();
-            if (OriginsReborn.getInstance().getConfig().getBoolean("orb-of-origin.consume")) {
+            if (ConfigManager.getConfigValue(ConfigManager.Option.ORB_OF_ORIGIN_CONSUME)) {
                 ItemStack i = player.getInventory().getItem(hand);
                 if (i != null) i.setAmount(i.getAmount() - 1);
             }

@@ -19,17 +19,17 @@ public interface CooldownAbility extends Ability {
     }
 
     default void setCooldown(Player player) {
-        if (OriginsReborn.getInstance().getConfig().getBoolean("cooldowns.disable-all-cooldowns")) return;
+        if (ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_ALL_COOLDOWNS)) return;
         OriginsReborn.getCooldowns().setCooldown(player, getCooldownKey());
     }
 
     default void setCooldown(Player player, int amount) {
-        if (OriginsReborn.getInstance().getConfig().getBoolean("cooldowns.disable-all-cooldowns")) return;
+        if (ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_ALL_COOLDOWNS)) return;
         OriginsReborn.getCooldowns().setCooldown(player, getCooldownKey(), amount);
     }
 
     default boolean hasCooldown(Player player) {
-        if (OriginsReborn.getInstance().getConfig().getBoolean("cooldowns.disable-all-cooldowns")) return false;
+        if (ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_ALL_COOLDOWNS)) return false;
         return OriginsReborn.getCooldowns().hasCooldown(player, getCooldownKey());
     }
 

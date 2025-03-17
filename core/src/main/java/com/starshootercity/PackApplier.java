@@ -2,6 +2,7 @@ package com.starshootercity;
 
 import com.starshootercity.packetsenders.OriginsRebornResourcePackInfo;
 import com.starshootercity.util.ShortcutUtils;
+import com.starshootercity.util.config.ConfigManager;
 import com.viaversion.viaversion.api.Via;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,10 +19,13 @@ public class PackApplier implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (OriginsReborn.getInstance().getConfig().getBoolean("resource-pack.enabled")) {
-            if (ShortcutUtils.isBedrockPlayer(event.getPlayer().getUniqueId())) return;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(OriginsReborn.getInstance(), () -> sendPacks(event.getPlayer()), 120);
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(OriginsReborn.getInstance(), () -> {
+                    if (ConfigManager.getConfigValue(ConfigManager.Option.RESOURCE_PACK_ENABLED)) {
+                        if (ShortcutUtils.isBedrockPlayer(event.getPlayer().getUniqueId())) return;
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(OriginsReborn.getInstance(), () -> sendPacks(event.getPlayer()), 120);
+                    }
+                }
+        );
     }
 
     public static void sendPacks(Player player) {
