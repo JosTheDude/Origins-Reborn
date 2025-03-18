@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.Ability;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -10,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Conduit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -31,7 +33,7 @@ public class ConduitPowerOnLand implements Ability {
     private final Predicate<Block> isConduit = block -> block.getType().equals(Material.CONDUIT);
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         new BukkitRunnable() {
             @Override
             public void run() {

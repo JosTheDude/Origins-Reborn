@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.Ability;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.enchantments.Enchantment;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -34,7 +36,7 @@ public class Aquatic implements Ability, Listener {
     private final String damageMultiplier = "impaling_damage_increase";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), damageMultiplier, Collections.singletonList("Amount to increase damage by per level of Impaling"), ConfigManager.SettingType.FLOAT, 2.5f);
     }
 }

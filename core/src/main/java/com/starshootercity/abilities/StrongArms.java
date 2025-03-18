@@ -2,6 +2,10 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.abilities.types.BreakSpeedModifierAbility;
+import com.starshootercity.abilities.types.MultiAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.FluidCollisionMode;
@@ -13,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +49,7 @@ public class StrongArms implements MultiAbility, Listener, VisibleAbility {
     private static List<Material> naturalStones;
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         String naturalStone = "natural_stones";
         registerConfigOption(OriginsReborn.getInstance(), naturalStone, Collections.singletonList("Blocks that count as natural stone"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
                 Material.STONE,
@@ -97,7 +102,7 @@ public class StrongArms implements MultiAbility, Listener, VisibleAbility {
 
         @Override
         @SuppressWarnings("deprecation")
-        public BlockMiningContext provideContextFor(Player player) {
+        public BlockMiningContext getMiningContext(Player player) {
             boolean aquaAffinity = false;
             ItemStack helmet = player.getInventory().getHelmet();
             if (helmet != null) {

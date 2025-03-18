@@ -1,5 +1,6 @@
 package com.starshootercity.abilities;
 
+import com.starshootercity.abilities.types.DependencyAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

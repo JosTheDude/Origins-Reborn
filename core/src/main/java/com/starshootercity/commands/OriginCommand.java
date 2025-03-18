@@ -1,9 +1,9 @@
 package com.starshootercity.commands;
 
 import com.starshootercity.*;
-import com.starshootercity.abilities.AbilityRegister;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerSwapOriginEvent;
+import com.starshootercity.util.AbilityRegister;
 import com.starshootercity.util.CompressionUtils;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.text.Component;

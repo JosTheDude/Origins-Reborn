@@ -1,9 +1,9 @@
 package com.starshootercity.skript;
 
-import com.starshootercity.abilities.VisibleAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 
-public class NamedSkriptAbility extends SkriptAbility implements VisibleAbility {
+public class NamedSkriptAbility extends BasicSkriptAbility implements VisibleAbility {
 
     private final String title;
     private final String description;

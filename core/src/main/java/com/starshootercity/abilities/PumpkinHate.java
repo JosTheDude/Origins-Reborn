@@ -2,6 +2,8 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.util.AbilityRegister;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -12,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +81,7 @@ public class PumpkinHate implements Listener, VisibleAbility {
     private final String poison = "consume_and_poison";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), poison, Collections.singletonList("Poison the player when consuming pumpkin pie rather than preventing them from eating it"), ConfigManager.SettingType.BOOLEAN, false);
     }
 

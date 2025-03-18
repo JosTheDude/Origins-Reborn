@@ -1,5 +1,6 @@
 package com.starshootercity.abilities;
 
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

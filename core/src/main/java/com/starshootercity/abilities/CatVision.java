@@ -3,6 +3,7 @@ package com.starshootercity.abilities;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
 import com.starshootercity.SavedPotionEffect;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;

@@ -1,5 +1,7 @@
 package com.starshootercity.abilities;
 
+import com.starshootercity.abilities.types.FlightAllowingAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.commands.FlightToggleCommand;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.util.TriState;

@@ -1,10 +1,10 @@
 package com.starshootercity.util.config;
 
 import com.starshootercity.OriginsReborn;
-import com.starshootercity.abilities.AbilityRegister;
-import com.starshootercity.abilities.AttributeModifierAbility;
+import com.starshootercity.abilities.types.AttributeModifierAbility;
 import com.starshootercity.abilities.FreshAir;
-import com.starshootercity.cooldowns.CooldownAbility;
+import com.starshootercity.abilities.types.CooldownAbility;
+import com.starshootercity.util.AbilityRegister;
 import net.kyori.adventure.key.Key;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;

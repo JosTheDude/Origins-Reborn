@@ -1,9 +1,12 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.AttributeModifierAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class NineLives implements AttributeModifierAbility, VisibleAbility {
@@ -28,7 +31,7 @@ public class NineLives implements AttributeModifierAbility, VisibleAbility {
     }
 
     @Override
-    public double getAmount() {
+    public double getAmount(Player player) {
         return -2;
     }
 

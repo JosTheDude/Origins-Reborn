@@ -1,8 +1,7 @@
 package com.starshootercity.util;
 
 import com.starshootercity.OriginsReborn;
-import com.starshootercity.abilities.AbilityRegister;
-import com.starshootercity.abilities.SkinChangingAbility;
+import com.starshootercity.abilities.types.SkinChangingAbility;
 import com.starshootercity.util.config.ConfigManager;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

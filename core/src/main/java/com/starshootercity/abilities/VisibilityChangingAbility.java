@@ -1,7 +1,9 @@
 package com.starshootercity.abilities;
 
-import org.bukkit.entity.Player;
-
-public interface VisibilityChangingAbility extends Ability {
-    boolean isInvisible(Player player);
+/**
+ * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
+ * @see com.starshootercity.abilities.types.VisibilityChangingAbility
+ */
+@Deprecated(forRemoval = true)
+public interface VisibilityChangingAbility extends com.starshootercity.abilities.types.VisibilityChangingAbility, Ability {
 }

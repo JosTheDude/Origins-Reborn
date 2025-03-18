@@ -9,7 +9,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import com.starshootercity.abilities.Ability;
+import com.starshootercity.abilities.types.Ability;
 import org.bukkit.Location;
 
 public class WorldGuardHook {

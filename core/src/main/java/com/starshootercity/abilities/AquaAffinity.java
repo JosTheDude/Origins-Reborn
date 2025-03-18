@@ -1,6 +1,8 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.BreakSpeedModifierAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
@@ -23,7 +25,7 @@ public class AquaAffinity implements BreakSpeedModifierAbility, VisibleAbility {
     }
 
     @Override
-    public BlockMiningContext provideContextFor(Player player) {
+    public BlockMiningContext getMiningContext(Player player) {
         return new BlockMiningContext(
                 player.getInventory().getItemInMainHand(),
                 player.getPotionEffect(OriginsReborn.getNMSInvoker().getMiningFatigueEffect()),

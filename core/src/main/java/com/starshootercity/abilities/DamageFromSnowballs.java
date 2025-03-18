@@ -1,12 +1,14 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.Ability;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +37,7 @@ public class DamageFromSnowballs implements Ability, Listener {
     private final String knockback = "knockback";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), damageAmount, Collections.singletonList("Amount of damage the player should take when hit with a snowball"), ConfigManager.SettingType.INTEGER, 3);
         registerConfigOption(OriginsReborn.getInstance(), knockback, Collections.singletonList("Whether snowballs should deal knockback too"), ConfigManager.SettingType.BOOLEAN, true);
     }

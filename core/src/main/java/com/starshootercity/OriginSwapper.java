@@ -2,10 +2,14 @@ package com.starshootercity;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import com.starshootercity.abilities.*;
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.abilities.types.AttributeModifierAbility;
+import com.starshootercity.abilities.types.DefaultSpawnAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.commands.OriginCommand;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.geysermc.GeyserSwapper;
+import com.starshootercity.util.AbilityRegister;
 import com.starshootercity.util.config.ConfigManager;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import net.kyori.adventure.key.Key;

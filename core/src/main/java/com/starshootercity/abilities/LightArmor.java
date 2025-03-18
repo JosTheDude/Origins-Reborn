@@ -2,6 +2,7 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.ShortcutUtils;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.util.config.ConfigManager;
@@ -15,6 +16,7 @@ import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -156,7 +158,7 @@ public class LightArmor implements Listener, VisibleAbility {
     }
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         String allowedArmor = "allowed_armor";
         registerConfigOption(OriginsReborn.getInstance(), allowedArmor, Collections.singletonList("Armor allowed to be equipped"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
                 Material.CHAINMAIL_HELMET,

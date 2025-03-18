@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
+import com.starshootercity.abilities.types.DependencyAbility;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;

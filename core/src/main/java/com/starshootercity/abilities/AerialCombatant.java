@@ -1,11 +1,13 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -36,7 +38,7 @@ public class AerialCombatant implements VisibleAbility, Listener {
     private final String damageMultiplier = "damage_multiplier";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), damageMultiplier, Collections.singletonList("Amount to multiply the damage by when gliding"), ConfigManager.SettingType.FLOAT, 2f);
     }
 }

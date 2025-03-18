@@ -1,6 +1,6 @@
 package com.starshootercity.abilities.impossible;
 
-import com.starshootercity.abilities.VisibleAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;

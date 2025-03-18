@@ -1,5 +1,7 @@
 package com.starshootercity.abilities;
 
+import com.starshootercity.abilities.types.SkinChangingAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

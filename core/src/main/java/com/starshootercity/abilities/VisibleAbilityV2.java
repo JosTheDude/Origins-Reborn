@@ -1,8 +1,11 @@
 package com.starshootercity.abilities;
 
+import com.starshootercity.abilities.types.VisibleAbility;
+
 /**
- @deprecated Temporary class for translation update, will be removed in a future version
+ * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
+ * @see com.starshootercity.abilities.types.VisibleAbility
  */
 @Deprecated(forRemoval = true)
-public interface VisibleAbilityV2 extends VisibleAbility {
+public interface VisibleAbilityV2 extends VisibleAbility, Ability {
 }

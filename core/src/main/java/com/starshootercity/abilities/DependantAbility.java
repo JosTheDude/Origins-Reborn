@@ -1,21 +1,9 @@
 package com.starshootercity.abilities;
 
-import net.kyori.adventure.key.Key;
-import org.jetbrains.annotations.NotNull;
-
-public interface DependantAbility extends Ability {
-    @NotNull Key getDependencyKey();
-
-    default @NotNull DependencyAbility getDependency() {
-        return AbilityRegister.dependencyAbilityMap.getOrDefault(getDependencyKey(), new PlaceholderDependencyAbility());
-    }
-
-    default DependencyType getDependencyType() {
-        return DependencyType.REGULAR;
-    }
-
-    enum DependencyType {
-        REGULAR,
-        INVERSE
-    }
+/**
+ * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
+ * @see com.starshootercity.abilities.types.DependantAbility
+ */
+@Deprecated(forRemoval = true)
+public interface DependantAbility extends com.starshootercity.abilities.types.DependantAbility, Ability {
 }

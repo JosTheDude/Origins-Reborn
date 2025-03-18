@@ -2,6 +2,7 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.DependantAbility;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

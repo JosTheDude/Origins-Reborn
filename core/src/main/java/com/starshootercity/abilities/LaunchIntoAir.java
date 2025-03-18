@@ -1,13 +1,15 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
-import com.starshootercity.cooldowns.CooldownAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.abilities.types.CooldownAbility;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +51,7 @@ public class LaunchIntoAir implements Listener, CooldownAbility, VisibleAbility 
     private final String launchStrength = "launch_strength";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), launchStrength, Collections.singletonList("How strong the launch effect should be"), ConfigManager.SettingType.FLOAT, 2f);
     }
 }

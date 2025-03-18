@@ -1,8 +1,9 @@
 package com.starshootercity.abilities;
 
-import org.bukkit.World;
-import org.jetbrains.annotations.Nullable;
-
-public interface DefaultSpawnAbility extends Ability {
-    @Nullable World getWorld();
+/**
+ * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
+ * @see com.starshootercity.abilities.types.DefaultSpawnAbility
+ */
+@Deprecated(forRemoval = true)
+public interface DefaultSpawnAbility extends com.starshootercity.abilities.types.DefaultSpawnAbility, Ability {
 }

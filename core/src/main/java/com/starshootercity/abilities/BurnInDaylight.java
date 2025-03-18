@@ -3,6 +3,8 @@ package com.starshootercity.abilities;
 import com.destroystokyo.paper.MaterialTags;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.DependantAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -13,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -74,7 +77,7 @@ public class BurnInDaylight implements DependantAbility, Listener, VisibleAbilit
     private final String burnWithHelmet = "burn_with_helmet";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), burnWithHelmet, List.of("Whether the player should burn even when wearing a helmet"), ConfigManager.SettingType.BOOLEAN, true);
     }
 }

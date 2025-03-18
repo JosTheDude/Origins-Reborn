@@ -2,12 +2,14 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,7 +45,7 @@ public class SprintJump implements Listener, VisibleAbility {
     private final String jumpStrength = "jump_strength";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), jumpStrength, Collections.singletonList("Strength of the Jump Boost effect to give"), ConfigManager.SettingType.INTEGER, 1);
     }
 }

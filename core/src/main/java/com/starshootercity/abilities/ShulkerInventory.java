@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.*;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import com.starshootercity.util.ShortcutUtils;
 import net.kyori.adventure.key.Key;
@@ -19,6 +20,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +86,7 @@ public class ShulkerInventory implements Listener, VisibleAbility {
     }
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerTranslation("container", "Shulker Inventory");
     }
 

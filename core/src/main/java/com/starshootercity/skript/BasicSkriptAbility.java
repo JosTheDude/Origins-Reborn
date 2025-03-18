@@ -1,14 +1,14 @@
 package com.starshootercity.skript;
 
-import com.starshootercity.abilities.Ability;
+import com.starshootercity.abilities.types.Ability;
 import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.NotNull;
 
-public class SkriptAbility implements Ability {
+public class BasicSkriptAbility implements Ability {
 
     private final Key key;
 
-    public SkriptAbility(Key key) {
+    public BasicSkriptAbility(Key key) {
         this.key = key;
     }
 

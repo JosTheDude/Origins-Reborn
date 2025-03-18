@@ -5,15 +5,19 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import com.starshootercity.abilities.Ability;
-import com.starshootercity.abilities.AbilityRegister;
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.skript.ComplexSkriptAbility;
+import com.starshootercity.skript.BasicSkriptAbility;
 import com.starshootercity.skript.NamedSkriptAbility;
-import com.starshootercity.skript.SkriptAbility;
+import com.starshootercity.util.AbilityRegister;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.Event;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class EffAbility extends Effect {
@@ -29,11 +33,22 @@ public class EffAbility extends Effect {
         if (key == null) return;
         if ((title == null) != (description == null)) return;
         Ability a;
+        List<Ability> abilities = new ArrayList<>();
+
         if (title != null) {
             String titl = title.getSingle(event);
             String desc = description.getSingle(event);
-            a = new NamedSkriptAbility(Key.key(key), titl, desc);
-        } else a = new SkriptAbility(Key.key(key));
+            abilities.add(new NamedSkriptAbility(Key.key(key + "_display"), titl, desc));
+        }
+
+        if (abilities.isEmpty()) {
+            a = new BasicSkriptAbility(Key.key(key));
+        } else {
+            a = new ComplexSkriptAbility(
+                    Key.key(key),
+                    abilities
+            );
+        }
         AbilityRegister.registerAbility(
                 a,
                 Skript.getInstance()

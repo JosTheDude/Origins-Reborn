@@ -1,9 +1,9 @@
 package com.starshootercity;
 
-import com.starshootercity.abilities.Ability;
-import com.starshootercity.abilities.AbilityRegister;
-import com.starshootercity.abilities.MultiAbility;
-import com.starshootercity.abilities.VisibleAbility;
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.abilities.types.MultiAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.util.AbilityRegister;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -182,6 +182,6 @@ public class Origin {
 
     public String getResourceURL() {
         String key = icon.getType().getKey().value();
-        return "https://assets.mcasset.cloud/1.20.4/assets/minecraft/textures/%s/%s.png".formatted(icon.getType().isBlock() ? "block" : "item", key);
+        return "https://assets.mcasset.cloud/1.21.4/assets/minecraft/textures/%s/%s.png".formatted(icon.getType().isBlock() ? "block" : "item", key);
     }
 }

@@ -1,12 +1,16 @@
 package com.starshootercity;
 
 import com.starshootercity.abilities.*;
+import com.starshootercity.abilities.types.Ability;
+import com.starshootercity.abilities.types.BreakSpeedModifierAbility;
+import com.starshootercity.abilities.types.ParticleAbility;
 import com.starshootercity.commands.FlightToggleCommand;
 import com.starshootercity.commands.OriginCommand;
 import com.starshootercity.cooldowns.Cooldowns;
 import com.starshootercity.events.PlayerLeftClickEvent;
 import com.starshootercity.packetsenders.*;
 import com.starshootercity.skript.SkriptInitializer;
+import com.starshootercity.util.AbilityRegister;
 import com.starshootercity.util.Metrics;
 import com.starshootercity.util.config.ConfigManager;
 import com.starshootercity.util.SkinManager;
@@ -241,7 +245,7 @@ public class OriginsReborn extends OriginsAddon {
     }
 
     @Override
-    public @NotNull List<Ability> getAbilities() {
+    public @NotNull List<Ability> getRegisteredAbilities() {
         List<Ability> abilities = new ArrayList<>(List.of(
                 new PumpkinHate(),
                 new FallImmunity(),

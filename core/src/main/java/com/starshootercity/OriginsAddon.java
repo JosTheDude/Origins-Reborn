@@ -1,9 +1,9 @@
 package com.starshootercity;
 
-import com.starshootercity.abilities.Ability;
-import com.starshootercity.abilities.AbilityRegister;
+import com.starshootercity.abilities.types.Ability;
 import com.starshootercity.events.PlayerSwapOriginEvent;
 import com.starshootercity.packetsenders.OriginsRebornResourcePackInfo;
+import com.starshootercity.util.AbilityRegister;
 import net.kyori.adventure.key.Key;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,16 +14,6 @@ import java.io.File;
 import java.util.List;
 
 public abstract class OriginsAddon extends JavaPlugin {
-
-    private static OriginsAddon instance;
-
-    /**
-     @deprecated Does not work as intended
-     */
-    @Deprecated(forRemoval = true)
-    public static OriginsAddon getInstance() {
-        return instance;
-    }
 
     public @Nullable SwapStateGetter shouldOpenSwapMenu() {
         return null;
@@ -54,12 +44,18 @@ public abstract class OriginsAddon extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        instance = this;
         onRegister();
         AddonLoader.register(this);
+
+        // Will be removed in the future
         for (Ability ability : getAbilities()) {
             AbilityRegister.registerAbility(ability, this);
         }
+
+        for (Ability ability : getRegisteredAbilities()) {
+            AbilityRegister.registerAbility(ability, this);
+        }
+
         if (getResourcePackInfo() != null) PackApplier.addResourcePack(this, getResourcePackInfo());
         afterRegister();
     }
@@ -79,7 +75,21 @@ public abstract class OriginsAddon extends JavaPlugin {
 
     public abstract @NotNull String getNamespace();
 
-    public @NotNull List<Ability> getAbilities() {
+    /**
+     * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
+     * @return List of abilities the plugin will register
+     * @see OriginsAddon#getRegisteredAbilities()
+     */
+    @Deprecated(forRemoval = true)
+    public @NotNull List<com.starshootercity.abilities.Ability> getAbilities() {
+        return List.of();
+    }
+
+    /**
+     * Used to return a list of abilities the plugin should register
+     * @return List of abilities the plugin will register
+     */
+    public @NotNull List<Ability> getRegisteredAbilities() {
         return List.of();
     }
 }

@@ -2,8 +2,11 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
-import com.starshootercity.cooldowns.CooldownAbility;
+import com.starshootercity.abilities.types.FlightAllowingAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
+import com.starshootercity.abilities.types.CooldownAbility;
 import com.starshootercity.cooldowns.Cooldowns;
+import com.starshootercity.util.AbilityRegister;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

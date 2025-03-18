@@ -2,6 +2,10 @@ package com.starshootercity.abilities;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.BreakSpeedModifierAbility;
+import com.starshootercity.abilities.types.DependantAbility;
+import com.starshootercity.abilities.types.FlightAllowingAbility;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -17,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -76,7 +81,7 @@ public class Phasing implements DependantAbility, FlightAllowingAbility, BreakSp
     }
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         String impassableBlocks = "impassable_blocks";
 
         registerConfigOption(OriginsReborn.getInstance(), impassableBlocks, Collections.singletonList("Blocks you cannot pass through when phasing"), ConfigManager.SettingType.MATERIAL_LIST, List.of(
@@ -134,7 +139,7 @@ public class Phasing implements DependantAbility, FlightAllowingAbility, BreakSp
     }
 
     @Override
-    public BlockMiningContext provideContextFor(Player player) {
+    public BlockMiningContext getMiningContext(Player player) {
         ItemStack helmet = player.getInventory().getHelmet();
         boolean aquaAffinity = false;
         if (helmet != null) {

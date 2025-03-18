@@ -1,6 +1,7 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -10,6 +11,7 @@ import org.bukkit.Tag;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -69,7 +71,7 @@ public class FreshAir implements Listener, VisibleAbility {
     public static String minHeight = "minimum_altitude";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerTranslation("avian_sleep_fail", "You need fresh air to sleep");
         registerConfigOption(OriginsReborn.getInstance(), minHeight, Collections.singletonList("Minimum altitude the player can sleep at"), ConfigManager.SettingType.INTEGER, 86);
     }

@@ -1,11 +1,13 @@
 package com.starshootercity.abilities;
 
 import com.starshootercity.OriginsReborn;
+import com.starshootercity.abilities.types.VisibleAbility;
 import com.starshootercity.util.config.ConfigManager;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -34,7 +36,7 @@ public class MoreExhaustion implements Listener, VisibleAbility {
     private final String exhaustionMultiplier = "exhaustion_multiplier";
 
     @Override
-    public void initialize() {
+    public void initialize(JavaPlugin plugin) {
         registerConfigOption(OriginsReborn.getInstance(), exhaustionMultiplier, Collections.singletonList("Amount to multiply exhaustion by"), ConfigManager.SettingType.FLOAT, 1.6f);
     }
 }
