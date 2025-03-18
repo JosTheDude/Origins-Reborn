@@ -199,7 +199,7 @@ public class OriginsReborn extends OriginsAddon {
 
         AbilityRegister.setupAbilityConfig();
 
-        if (getConfig().getBoolean("swap-command.vault.enabled")) {
+        if (ConfigManager.getConfigValue(ConfigManager.Option.SWAP_COMMAND_VAULT_ENABLED)) {
             vaultEnabled = setupEconomy();
             if (!vaultEnabled) {
                 getLogger().warning("Vault is missing, origin swaps will not cost currency");
@@ -222,7 +222,7 @@ public class OriginsReborn extends OriginsAddon {
         ));
 
         cooldowns = new Cooldowns();
-        if (!getConfig().getBoolean("cooldowns.disable-all-cooldowns") && getConfig().getBoolean("cooldowns.show-cooldown-icons")) {
+        if (!ConfigManager.getConfigValue(ConfigManager.Option.DISABLE_ALL_COOLDOWNS) && ConfigManager.getConfigValue(ConfigManager.Option.SHOW_COOLDOWN_ICONS)) {
             Bukkit.getPluginManager().registerEvents(cooldowns, this);
         }
         SkriptInitializer.initialize(this);
