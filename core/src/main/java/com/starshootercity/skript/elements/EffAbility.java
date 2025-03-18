@@ -5,6 +5,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import com.starshootercity.OriginsReborn;
 import com.starshootercity.abilities.types.Ability;
 import com.starshootercity.skript.ComplexSkriptAbility;
 import com.starshootercity.skript.BasicSkriptAbility;
@@ -49,6 +50,8 @@ public class EffAbility extends Effect {
                     abilities
             );
         }
+
+        OriginsReborn.usesSkriptAbilities = true;
         AbilityRegister.registerAbility(
                 a,
                 Skript.getInstance()

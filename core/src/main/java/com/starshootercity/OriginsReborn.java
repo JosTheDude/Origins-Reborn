@@ -110,6 +110,7 @@ public class OriginsReborn extends OriginsAddon {
     }
 
     private static boolean worldGuardHookInitialized;
+    public static boolean usesSkriptAbilities = false;
 
     public static boolean isWorldGuardHookInitialized() {
         return worldGuardHookInitialized;
@@ -150,6 +151,7 @@ public class OriginsReborn extends OriginsAddon {
                 () -> {
                     Map<String, Integer> data = new HashMap<>();
                     for (OriginsAddon addon : AddonLoader.registeredAddons) {
+                        if (addon == this) continue;
                         data.put(addon.getName(), 1);
                     }
                     return data;
@@ -207,6 +209,16 @@ public class OriginsReborn extends OriginsAddon {
         metrics.addCustomChart(new Metrics.SimplePie(
                 "vault_hook_enabled",
                 () -> String.valueOf(vaultEnabled)
+        ));
+
+        metrics.addCustomChart(new Metrics.SimplePie(
+                "uses_skript_abilities",
+                () -> String.valueOf(usesSkriptAbilities)
+        ));
+
+        metrics.addCustomChart(new Metrics.SimplePie(
+                "worldguard_hook_enabled",
+                () -> String.valueOf(worldGuardHookInitialized)
         ));
 
         cooldowns = new Cooldowns();
