@@ -144,7 +144,9 @@ public class AbilityRegister {
         if (ability instanceof CooldownAbility cooldownAbility) {
             cooldownAbility.setupCooldownConfig(instance);
         }
-        if (ability instanceof Listener listener) {
+        if (ability instanceof ListenerAbility listenerAbility) {
+            if (listenerAbility.shouldRegisterEvents()) Bukkit.getPluginManager().registerEvents(listenerAbility, instance);
+        } else if (ability instanceof Listener listener) {
             Bukkit.getPluginManager().registerEvents(listener, instance);
         }
         if (ability instanceof VisibleAbility visibleAbility) {

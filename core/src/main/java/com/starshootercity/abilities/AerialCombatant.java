@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 
 public class AerialCombatant implements VisibleAbility, Listener {
+
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         runForAbility(event.getDamager(), player -> {

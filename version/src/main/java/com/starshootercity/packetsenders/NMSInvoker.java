@@ -178,6 +178,8 @@ public abstract class NMSInvoker implements Listener {
 
     public abstract int getConduitRange(Conduit conduit);
 
+    public abstract void setTouchingWater(Player player);
+
     public void initialize() {
 
     }

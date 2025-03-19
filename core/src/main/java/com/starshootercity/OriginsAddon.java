@@ -47,11 +47,6 @@ public abstract class OriginsAddon extends JavaPlugin {
         onRegister();
         AddonLoader.register(this);
 
-        // Will be removed in the future
-        for (Ability ability : getAbilities()) {
-            AbilityRegister.registerAbility(ability, this);
-        }
-
         for (Ability ability : getRegisteredAbilities()) {
             AbilityRegister.registerAbility(ability, this);
         }
@@ -74,16 +69,6 @@ public abstract class OriginsAddon extends JavaPlugin {
     public void afterRegister() {}
 
     public abstract @NotNull String getNamespace();
-
-    /**
-     * @deprecated Ability interfaces have been moved to com.starshootercity.abilities.types
-     * @return List of abilities the plugin will register
-     * @see OriginsAddon#getRegisteredAbilities()
-     */
-    @Deprecated(forRemoval = true)
-    public @NotNull List<com.starshootercity.abilities.Ability> getAbilities() {
-        return List.of();
-    }
 
     /**
      * Used to return a list of abilities the plugin should register

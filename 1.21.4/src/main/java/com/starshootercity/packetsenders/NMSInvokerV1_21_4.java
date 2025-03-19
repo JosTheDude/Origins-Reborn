@@ -470,4 +470,9 @@ public class NMSInvokerV1_21_4 extends NMSInvoker {
     public @Nullable Material getOminousBottle() {
         return Material.OMINOUS_BOTTLE;
     }
+
+    @Override
+    public void setTouchingWater(Player player) {
+        ((CraftPlayer) player).getHandle().wasTouchingWater = true;
+    }
 }

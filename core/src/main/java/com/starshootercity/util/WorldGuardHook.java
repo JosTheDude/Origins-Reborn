@@ -16,7 +16,6 @@ public class WorldGuardHook {
 
     private static RegionContainer rc;
 
-
     public static boolean isAbilityDisabled(Location location, Ability ability) {
         try {
             RegionManager manager = rc.get(BukkitAdapter.adapt(location.getWorld()));

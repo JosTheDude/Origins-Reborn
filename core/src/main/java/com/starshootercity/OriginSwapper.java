@@ -935,8 +935,8 @@ public class OriginSwapper implements Listener {
             if (size > 0) lines.add(new LineComponent());
             for (VisibleAbility visibleAbility : visibleAbilities) {
                 count++;
-                lines.addAll(visibleAbility.getUsedTitle());
-                lines.addAll(visibleAbility.getUsedDescription());
+                lines.addAll(visibleAbility.getTitle());
+                lines.addAll(visibleAbility.getDescription());
                 if (count < size) lines.add(new LineComponent());
             }
         }
