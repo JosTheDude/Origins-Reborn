@@ -6,7 +6,8 @@ Origins-Reborn is not official, and any bug reports or feature requests for Orig
 
 If you want more origins, you can see **a list of Origins-Reborn addons** [here](https://starshooter.gitbook.io/origins-reborn/addons)!
 
-Note: If you are having any issues with the plugin, please first ensure you are on the latest version of the original Origins-Reborn plugin from Modrinth.
+
+Note: If you are having any issues with the plugin, please first ensure you are on the latest version of the original [Origins-Reborn](https://modrinth.com/plugin/origins-reborn) plugin from Modrinth.
 
 Any older versions or forks are very likely to be outdated or unstable.
 
